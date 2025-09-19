@@ -403,7 +403,7 @@ extension DateTimeHelper on DateTime {
     DateTime other, [
     TimeGranularity granularity = TimeGranularity.microseconds,
   ]) =>
-      isAfter(granularity._apply(other));
+      granularity._apply(this).isAfter(granularity._apply(other));
 
   /// check if `this` is before [other]
   ///
@@ -418,7 +418,7 @@ extension DateTimeHelper on DateTime {
     DateTime other, [
     TimeGranularity granularity = TimeGranularity.microseconds,
   ]) =>
-      isBefore(granularity._apply(other));
+      granularity._apply(this).isBefore(granularity._apply(other));
 
   /// check if [other] is the same or before `this`
   ///
@@ -734,9 +734,7 @@ extension _GranularityExt on TimeGranularity {
       milliseconds: () => time.copyWith(
         microsecond: 0,
       ),
-      microseconds: () => time.copyWith(
-        microsecond: 0,
-      ),
+      microseconds: () => time, 
     );
   }
 }

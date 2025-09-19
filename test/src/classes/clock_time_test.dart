@@ -5,8 +5,13 @@ void main() {
   group('ClockTime', () {
     group('constructor', () {
       test('should create valid ClockTime with all parameters', () {
-        final time = ClockTime(14,
-            minute: 30, second: 45, millisecond: 123, microsecond: 456);
+        final time = ClockTime(
+          14,
+          minute: 30,
+          second: 45,
+          millisecond: 123,
+          microsecond: 456,
+        );
 
         expect(time.hour, equals(14));
         expect(time.minute, equals(30));

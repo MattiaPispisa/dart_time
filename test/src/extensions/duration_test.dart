@@ -55,9 +55,9 @@ void main() {
         const duration = Duration(days: 100, hours: 25, minutes: 70);
         final isoDuration = duration.toIsoDuration();
 
-        expect(isoDuration.days, equals(100));
-        expect(isoDuration.hours, equals(25 % 24)); // Should be 1
-        expect(isoDuration.minutes, equals(70 % 60)); // Should be 10
+        expect(isoDuration.days, equals(101));
+        expect(isoDuration.hours, equals(2));
+        expect(isoDuration.minutes, equals(10));
       });
     });
 
@@ -81,7 +81,6 @@ void main() {
       test('isZero should work correctly', () {
         expect(Duration.zero.isZero, isTrue);
         expect(const Duration(seconds: 1).isZero, isFalse);
-        expect(Duration.zero, isTrue);
       });
 
       test('isPositive should work correctly', () {
@@ -146,7 +145,7 @@ void main() {
 
         expect(duration1.hhmmss, equals('02:30:45'));
         expect(duration2.hhmmss, equals('25:05:00'));
-        expect(duration3.hhmmss, equals('-2:30:00'));
+        expect(duration3.hhmmss, equals('-02:30:00'));
       });
 
       test('hhmmssmmm should format correctly', () {
@@ -318,9 +317,15 @@ void main() {
     });
 
     test('should handle precision correctly', () {
-      final duration = 1.333333.fractionalHours; // 1 hour 20 minutes
+      // 1.333333 is not exactly 1 + 1/3, so it gives 19 minutes instead of 20
+      final duration = 1.333333.fractionalHours;
       expect(duration.inHours, equals(1));
-      expect(duration.inMinutes % 60, equals(20));
+      expect(duration.inMinutes % 60, equals(19));
+
+      // For exact results, use precise fractions
+      final preciseDuration = (1 + 1 / 3).fractionalHours;
+      expect(preciseDuration.inHours, equals(1));
+      expect(preciseDuration.inMinutes % 60, equals(20));
     });
   });
 
