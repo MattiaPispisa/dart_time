@@ -24,7 +24,6 @@
       - [`ClockTimeRange` - Clock Time range representation](#clocktimerange---clock-time-range-representation)
       - [`DartDateRange` - Date range representation](#dartdaterange---date-range-representation)
       - [`ISODuration` - ISO 8601 duration representation](#isoduration---iso-8601-duration-representation)
-      - [`TimeGranularity` - Time comparison granularity](#timegranularity---time-comparison-granularity)
 
 
 A comprehensive Dart library for advanced time and date manipulation. This library extends Dart's built-in `DateTime` and `Duration` classes with powerful utilities and introduces new classes for specialized time operations.
@@ -373,30 +372,6 @@ final days = range.dates.toList(); // All days in the year
 - `String toString()` - String representation
 - `bool operator ==(Object other)` - Equality comparison
 - `int get hashCode` - Hash code
-
-#### `TimeGranularity` - Time comparison granularity
-*Enum for specifying precision levels in time comparisons.*
-
-**Values:**
-- `TimeGranularity.year` - Year level precision
-- `TimeGranularity.month` - Month level precision
-- `TimeGranularity.day` - Day level precision
-- `TimeGranularity.hour` - Hour level precision
-- `TimeGranularity.minute` - Minute level precision
-- `TimeGranularity.second` - Second level precision
-- `TimeGranularity.milliseconds` - Millisecond level precision
-- `TimeGranularity.microseconds` - Microsecond level precision
-
-**Methods:**
-- `bool get isYear` - Check if year granularity
-- `bool get isMonth` - Check if month granularity
-- `bool get isDay` - Check if day granularity
-- `bool get isHour` - Check if hour granularity
-- `bool get isMinute` - Check if minute granularity
-- `bool get isSecond` - Check if second granularity
-- `bool get isMilliseconds` - Check if milliseconds granularity
-- `bool get isMicroseconds` - Check if microseconds granularity
-- `T map<T>({required T year, required T month, required T day, required T hour, required T minute, required T second, required T milliseconds, required T microseconds})` - Map to different values based on granularity
 
 ---
 

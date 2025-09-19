@@ -5,9 +5,15 @@ final _kRegExpIsoDuration = RegExp(
 );
 
 /// [ISODuration] is the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) duration.
+/// 
+/// Supports both positive and negative durations according to ISO 8601 standard.
+/// Negative durations are prefixed with a minus sign (-).
 @immutable
 class ISODuration {
   /// Creates a new [ISODuration] instance.
+  /// 
+  /// All components can be negative. If any component is negative,
+  /// the entire duration is considered negative.
   factory ISODuration({
     int? years,
     int? months,
@@ -30,20 +36,29 @@ class ISODuration {
 
   /// parse [isoString] following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
   ///
+  /// Supports negative durations prefixed with '-' (e.g., '-P1Y2M3D').
   /// if [isoString] does not follow correct format,
   /// an [ArgumentError] is thrown.
   factory ISODuration.parse(String isoString) {
     _validateIsoString(isoString);
 
+    // Check if duration is negative
+    final isNegative = isoString.startsWith('-');
+    
+    // Remove the sign for parsing
+    final cleanIsoString = isoString.startsWith('-') || isoString.startsWith('+') 
+        ? isoString.substring(1) 
+        : isoString;
+
     // split between period and time
-    final isoStringSplit = isoString.split('T');
+    final isoStringSplit = cleanIsoString.split('T');
 
     var isoPeriodString = '';
     var isoTimeString = '';
 
     // no "T" found, just period
     if (isoStringSplit.length == 1) {
-      isoPeriodString = isoString;
+      isoPeriodString = cleanIsoString;
     }
     // period and time
     else {
@@ -66,6 +81,17 @@ class ISODuration {
     hours = _parseTime(isoTimeString, 'H');
     minutes = _parseTime(isoTimeString, 'M');
     seconds = _parseTime(isoTimeString, 'S');
+
+    // Apply negative sign to all components if duration is negative
+    if (isNegative) {
+      year = -year;
+      month = -month;
+      weeks = -weeks;
+      days = -days;
+      hours = -hours;
+      minutes = -minutes;
+      seconds = -seconds;
+    }
 
     return ISODuration(
       years: year,
@@ -133,6 +159,20 @@ class ISODuration {
   /// seconds
   final int seconds;
 
+  /// Returns true if this duration is negative.
+  /// A duration is considered negative if any of its components is negative.
+  bool get isNegative => years < 0 || months < 0 || weeks < 0 || days < 0 || 
+                         hours < 0 || minutes < 0 || seconds < 0;
+
+  /// Returns true if this duration is positive.
+  /// A duration is considered positive if any of its components is positive.
+  bool get isPositive => years > 0 || months > 0 || weeks > 0 || days > 0 || 
+                         hours > 0 || minutes > 0 || seconds > 0;
+
+  /// Returns true if this duration is zero (all components are zero).
+  bool get isZero => years == 0 && months == 0 && weeks == 0 && days == 0 && 
+                     hours == 0 && minutes == 0 && seconds == 0;
+
   @override
   bool operator ==(Object other) =>
       other is ISODuration &&
@@ -164,43 +204,64 @@ class ISODuration {
   /// convert [ISODuration] to ISO 8601 string format
   ///
   /// returns a string following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+  /// Negative durations are prefixed with '-'.
   String toIso() {
-    final buffer = StringBuffer('P');
+    // Check if any component is negative to determine if entire duration is negative
+    final isNegative = years < 0 || months < 0 || weeks < 0 || days < 0 || 
+                       hours < 0 || minutes < 0 || seconds < 0;
+    
+    final buffer = StringBuffer();
+    
+    // Add negative sign if needed
+    if (isNegative) {
+      buffer.write('-');
+    }
+    
+    buffer.write('P');
 
-    if (years > 0) {
-      buffer.write('${years}Y');
+    // Use absolute values for output since sign is handled at the beginning
+    final absYears = years.abs();
+    final absMonths = months.abs();
+    final absWeeks = weeks.abs();
+    final absDays = days.abs();
+    final absHours = hours.abs();
+    final absMinutes = minutes.abs();
+    final absSeconds = seconds.abs();
+
+    if (absYears > 0) {
+      buffer.write('${absYears}Y');
     }
 
-    if (months > 0) {
-      buffer.write('${months}M');
+    if (absMonths > 0) {
+      buffer.write('${absMonths}M');
     }
 
-    if (weeks > 0) {
-      buffer.write('${weeks}W');
+    if (absWeeks > 0) {
+      buffer.write('${absWeeks}W');
     }
 
-    if (days > 0) {
-      buffer.write('${days}D');
+    if (absDays > 0) {
+      buffer.write('${absDays}D');
     }
 
-    if (hours > 0 || minutes > 0 || seconds > 0) {
+    if (absHours > 0 || absMinutes > 0 || absSeconds > 0) {
       buffer.write('T');
 
-      if (hours > 0) {
-        buffer.write('${hours}H');
+      if (absHours > 0) {
+        buffer.write('${absHours}H');
       }
 
-      if (minutes > 0) {
-        buffer.write('${minutes}M');
+      if (absMinutes > 0) {
+        buffer.write('${absMinutes}M');
       }
 
-      if (seconds > 0) {
-        buffer.write('${seconds}S');
+      if (absSeconds > 0) {
+        buffer.write('${absSeconds}S');
       }
     }
 
-    // if no components were added, return P0D
-    if (buffer.length == 1) {
+    // if no components were added, return P0D (or -P0D for negative)
+    if (buffer.toString() == 'P' || buffer.toString() == '-P') {
       buffer.write('0D');
     }
 
