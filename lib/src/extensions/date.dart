@@ -120,7 +120,8 @@ extension DateTimeHelper on DateTime {
 
   /// get the end of the month
   DateTime get endOfMonth {
-    // Get the first day of the next month, then subtract 1 day to get the last day of current month
+    // Get the first day of the next month,
+    // then subtract 1 day to get the last day of current month
     final nextMonth = month == 12
         ? DateTimeHelper.named(year: year + 1, month: 1, day: 1)
         : DateTimeHelper.named(year: year, month: month + 1, day: 1);
@@ -355,7 +356,8 @@ extension DateTimeHelper on DateTime {
 
   /// Get the number of days in this month
   ///
-  /// Returns the correct number of days for each month, accounting for leap years.
+  /// Returns the correct number of days for each month,
+  /// accounting for leap years.
   ///
   /// Example:
   /// ```dart
@@ -365,9 +367,10 @@ extension DateTimeHelper on DateTime {
   /// DateTime(2023, 1, 15).daysInMonth; // 31 (January)
   /// ```
   int get daysInMonth {
-    // Get the first day of the next month, then subtract to get last day of current month
+    // Get the first day of the next month,
+    // then subtract to get last day of current month
     final nextMonth =
-        month == 12 ? DateTime(year + 1, 1, 1) : DateTime(year, month + 1, 1);
+        month == 12 ? DateTime(year + 1) : DateTime(year, month + 1);
     final lastDayOfMonth = nextMonth.subtract(const Duration(days: 1));
     return lastDayOfMonth.day;
   }
@@ -734,7 +737,7 @@ extension _GranularityExt on TimeGranularity {
       milliseconds: () => time.copyWith(
         microsecond: 0,
       ),
-      microseconds: () => time, 
+      microseconds: () => time,
     );
   }
 }
