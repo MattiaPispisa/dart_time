@@ -7,6 +7,7 @@
 [![ci_badge][ci_badge]][ci_link]
 [![License: MIT][license_badge]][license_link]
 [![pub publisher][pub_publisher]][pub_publisher_link]
+[![style: very good analysis][badge_very_good_analysis]][badge_very_good_analysis_link]
 
 - [Dart Time](#dart-time)
   - [Features](#features)
@@ -411,3 +412,5 @@ final days = range.dates.toList(); // All days in the year
 [pub_publisher]: https://img.shields.io/pub/publisher/dart_time
 [pub_publisher_link]: https://pub.dev/packages?q=publisher%3Amattiapispisa.it
 [pub_likes]: https://img.shields.io/pub/likes/dart_time
+[badge_very_good_analysis]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
+[badge_very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
