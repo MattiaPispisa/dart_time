@@ -404,7 +404,7 @@ final days = range.dates.toList(); // All days in the year
 [license_link]: https://opensource.org/licenses/MIT
 [dart_time_badge]: https://img.shields.io/pub/v/dart_time.svg
 [codecov_badge]: https://img.shields.io/codecov/c/github/MattiaPispisa/dart_time/main?logo=codecov
-[codecov_link]: https://app.codecov.io/gh/MattiaPispisa/dart_time/tree/main/packages/dart_time
+[codecov_link]: https://app.codecov.io/gh/MattiaPispisa/dart_time/tree/main
 [ci_badge]: https://img.shields.io/github/actions/workflow/status/MattiaPispisa/dart_time/main.yaml
 [ci_link]: https://github.com/MattiaPispisa/dart_time/actions/workflows/main.yaml
 [pub_points]: https://img.shields.io/pub/points/dart_time
