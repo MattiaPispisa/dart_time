@@ -22,6 +22,15 @@ class DartDateRange {
     return DartDateRange._(start: start, end: end);
   }
 
+  /// create a new [DartDateRange] instance for [date]
+  /// (`startOfDay` to `endOfDay`)
+  factory DartDateRange.day(DateTime date) {
+    return DartDateRange(
+      start: date.startOfDay,
+      end: date.endOfDay,
+    );
+  }
+
   const DartDateRange._({
     required this.start,
     required this.end,
@@ -113,6 +122,52 @@ class DartDateRange {
   ///
   bool contains(DartDateRange range) =>
       includes(range.start) && includes(range.end);
+
+  /// get the duration of the range
+  Duration get duration => end.difference(start);
+
+  /// Generate DateTime instances within the range
+  /// using the specified [step] interval.
+  ///
+  /// Returns an iterable of DateTime objects starting from [start]
+  /// and incrementing by [step] until reaching or exceeding [end].
+  /// The last generated DateTime will not exceed [end].
+  ///
+  /// Throws [ArgumentError] if [step] is zero or negative.
+  Iterable<DateTime> step(Duration step) {
+    if (step.inMicroseconds <= 0) {
+      throw ArgumentError.value(
+        step,
+        'step',
+        'Step duration must be positive',
+      );
+    }
+
+    return Iterable.generate(
+      (duration.inMicroseconds / step.inMicroseconds).floor() + 1,
+      (index) => start.add(step * index),
+    ).takeWhile((date) => date.isBefore(end) || date.isAtSameMomentAs(end));
+  }
+
+  /// get the dates in the range
+  Iterable<DateTime> get dates => step(const Duration(days: 1));
+
+  /// check if the range is multiple days
+  bool get isMultiDay => !start.isSameDay(end);
+
+  /// check if the range is single day
+  bool get isSingleDay => start.isSameDay(end);
+
+  /// extend the range by [before] and [after]
+  DartDateRange extend({
+    Duration? before,
+    Duration? after,
+  }) {
+    return DartDateRange(
+      start: start - (before ?? Duration.zero),
+      end: end + (after ?? Duration.zero),
+    );
+  }
 
   /// convert [DartDateRange] to JSON
   Map<String, dynamic> toJson() => {

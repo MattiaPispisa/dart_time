@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Fix apply",
+      "type": "shell",
+      "command": "dart fix --apply",
+      "problemMatcher": []
+    },
+    {
+      "label": "Format Code",
+      "type": "shell",
+      "command": "dart format --line-length 80 --set-exit-if-changed lib test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Analyze Code",
+      "type": "shell",
+      "command": "dart analyze --fatal-infos --fatal-warnings",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Code",
+      "type": "shell",
+      "command": "dart test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Pre publish",
+      "type": "shell",
+      "dependsOn": ["Format Code", "Analyze Code", "Test Code"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}

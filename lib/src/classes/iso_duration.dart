@@ -30,7 +30,8 @@ class ISODuration {
 
   /// parse [isoString] following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
   ///
-  /// if [isoString] does not follow correct format, an [ArgumentError] is thrown.
+  /// if [isoString] does not follow correct format,
+  /// an [ArgumentError] is thrown.
   factory ISODuration.parse(String isoString) {
     _validateIsoString(isoString);
 

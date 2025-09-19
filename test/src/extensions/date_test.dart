@@ -1,0 +1,632 @@
+import 'package:dart_time/dart_time.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('DateHelper', () {
+    final testDate = DateTimeHelper.named(
+      year: 2023,
+      month: 6,
+      day: 15,
+      hour: 14,
+      minute: 30,
+      second: 45,
+      millisecond: 123,
+      microsecond: 456,
+    );
+
+    group('named constructor', () {
+      test('should create DateTime with all parameters', () {
+        final date = DateTimeHelper.named(
+          year: 2023,
+          month: 6,
+          day: 15,
+          hour: 14,
+          minute: 30,
+          second: 45,
+          millisecond: 123,
+          microsecond: 456,
+        );
+
+        expect(date.year, equals(2023));
+        expect(date.month, equals(6));
+        expect(date.day, equals(15));
+        expect(date.hour, equals(14));
+        expect(date.minute, equals(30));
+        expect(date.second, equals(45));
+        expect(date.millisecond, equals(123));
+        expect(date.microsecond, equals(456));
+      });
+
+      test('should create DateTime with only year', () {
+        final date = DateTimeHelper.named(year: 2023);
+
+        expect(date.year, equals(2023));
+        expect(date.month, equals(1));
+        expect(date.day, equals(1));
+        expect(date.hour, equals(0));
+        expect(date.minute, equals(0));
+        expect(date.second, equals(0));
+        expect(date.millisecond, equals(0));
+        expect(date.microsecond, equals(0));
+      });
+    });
+
+    group('copyWith', () {
+      test('should copy with new values', () {
+        final copied = testDate.copyWith(year: 2024, month: 7);
+
+        expect(copied.year, equals(2024));
+        expect(copied.month, equals(7));
+        expect(copied.day, equals(15));
+        expect(copied.hour, equals(14));
+        expect(copied.minute, equals(30));
+        expect(copied.second, equals(45));
+        expect(copied.millisecond, equals(123));
+        expect(copied.microsecond, equals(456));
+      });
+
+      test('should copy with no changes', () {
+        final copied = testDate.copyWith();
+
+        expect(copied, equals(testDate));
+      });
+    });
+
+    group('copyTime', () {
+      test('should copy ClockTime to DateTime', () {
+        final time = ClockTime(10,
+            minute: 20, second: 30, millisecond: 100, microsecond: 200);
+        final copied = testDate.copyTime(time);
+
+        expect(copied.year, equals(2023));
+        expect(copied.month, equals(6));
+        expect(copied.day, equals(15));
+        expect(copied.hour, equals(10));
+        expect(copied.minute, equals(20));
+        expect(copied.second, equals(30));
+        expect(copied.millisecond, equals(100));
+        expect(copied.microsecond, equals(200));
+      });
+    });
+
+    group('start of period methods', () {
+      test('startOfYear should work correctly', () {
+        final result = testDate.startOfYear;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(1));
+        expect(result.day, equals(1));
+        expect(result.hour, equals(0));
+        expect(result.minute, equals(0));
+        expect(result.second, equals(0));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+
+      test('startOfMonth should work correctly', () {
+        final result = testDate.startOfMonth;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(1));
+        expect(result.hour, equals(0));
+        expect(result.minute, equals(0));
+        expect(result.second, equals(0));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+
+      test('startOfDay should work correctly', () {
+        final result = testDate.startOfDay;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(0));
+        expect(result.minute, equals(0));
+        expect(result.second, equals(0));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+
+      test('startOfHour should work correctly', () {
+        final result = testDate.startOfHour;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(0));
+        expect(result.second, equals(0));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+
+      test('startOfMinute should work correctly', () {
+        final result = testDate.startOfMinute;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+        expect(result.second, equals(0));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+
+      test('startOfSecond should work correctly', () {
+        final result = testDate.startOfSecond;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(0));
+        expect(result.microsecond, equals(0));
+      });
+    });
+
+    group('end of period methods', () {
+      test('endOfYear should work correctly', () {
+        final result = testDate.endOfYear;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(12));
+        expect(result.day, equals(31));
+        expect(result.hour, equals(23));
+        expect(result.minute, equals(59));
+        expect(result.second, equals(59));
+      });
+
+      test('endOfMonth should work correctly', () {
+        final result = testDate.endOfMonth;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(30)); // June has 30 days, not 31
+        expect(result.hour, equals(23));
+        expect(result.minute, equals(59));
+        expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
+      });
+
+      test('endOfMonth should handle different months correctly', () {
+        // January - 31 days
+        expect(DateTime(2023, 1, 15).endOfMonth.day, equals(31));
+
+        // February non-leap year - 28 days
+        expect(DateTime(2023, 2, 15).endOfMonth.day, equals(28));
+
+        // February leap year - 29 days
+        expect(DateTime(2020, 2, 15).endOfMonth.day, equals(29));
+
+        // April - 30 days
+        expect(DateTime(2023, 4, 15).endOfMonth.day, equals(30));
+
+        // December - 31 days
+        expect(DateTime(2023, 12, 15).endOfMonth.day, equals(31));
+      });
+
+      test('endOfDay should work correctly', () {
+        final result = testDate.endOfDay;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(23));
+        expect(result.minute, equals(59));
+        expect(result.second, equals(59));
+      });
+
+      test('endOfHour should work correctly', () {
+        final result = testDate.endOfHour;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(59));
+        expect(result.second, equals(59));
+      });
+
+      test('endOfMinute should work correctly', () {
+        final result = testDate.endOfMinute;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+        expect(result.second, equals(59));
+      });
+
+      test('endOfSecond should work correctly', () {
+        final result = testDate.endOfSecond;
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(999));
+      });
+    });
+
+    group('navigation methods', () {
+      test('nextDay should work correctly', () {
+        final result = testDate.nextDay;
+
+        expect(result.day, equals(16));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+      });
+
+      test('previousDay should work correctly', () {
+        final result = testDate.previousDay;
+
+        expect(result.day, equals(14));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+      });
+    });
+
+    group('granular comparison methods', () {
+      test('isGranularSame should work correctly', () {
+        final other = DateTimeHelper.named(
+          year: 2023,
+          month: 6,
+          day: 15,
+          hour: 10,
+          minute: 20,
+          second: 30,
+        );
+
+        expect(testDate.isGranularSame(other, TimeGranularity.day), isTrue);
+        expect(testDate.isGranularSame(other, TimeGranularity.hour), isFalse);
+        expect(testDate.isGranularSame(testDate), isTrue);
+      });
+
+      test('isSameYear should work correctly', () {
+        final sameYear = DateTime(2023, 12);
+        final differentYear = DateTime(2024, 6, 15);
+
+        expect(testDate.isSameYear(sameYear), isTrue);
+        expect(testDate.isSameYear(differentYear), isFalse);
+      });
+
+      test('isSameMonth should work correctly', () {
+        final sameMonth = DateTime(2023, 6);
+        final differentMonth = DateTime(2023, 7, 15);
+
+        expect(testDate.isSameMonth(sameMonth), isTrue);
+        expect(testDate.isSameMonth(differentMonth), isFalse);
+      });
+
+      test('isSameDay should work correctly', () {
+        final sameDay = DateTime(2023, 6, 15, 10);
+        final differentDay = DateTime(2023, 6, 16);
+
+        expect(testDate.isSameDay(sameDay), isTrue);
+        expect(testDate.isSameDay(differentDay), isFalse);
+      });
+
+      test('isSameHour should work correctly', () {
+        final sameHour = DateTime(2023, 6, 15, 14, 10);
+        final differentHour = DateTime(2023, 6, 15, 15);
+
+        expect(testDate.isSameHour(sameHour), isTrue);
+        expect(testDate.isSameHour(differentHour), isFalse);
+      });
+
+      test('isSameMinute should work correctly', () {
+        final sameMinute = DateTime(2023, 6, 15, 14, 30, 10);
+        final differentMinute = DateTime(2023, 6, 15, 14, 31);
+
+        expect(testDate.isSameMinute(sameMinute), isTrue);
+        expect(testDate.isSameMinute(differentMinute), isFalse);
+      });
+    });
+
+    group('week methods', () {
+      test('isSameWeek should work correctly with default first day (Monday)',
+          () {
+        final monday = DateTime(2023, 6, 12); // Monday
+        final friday = DateTime(2023, 6, 16); // Friday same week
+        final nextMonday = DateTime(2023, 6, 19); // Monday next week
+
+        expect(monday.isSameWeek(friday), isTrue);
+        expect(monday.isSameWeek(nextMonday), isFalse);
+      });
+
+      test('isSameWeek should work correctly with custom first day', () {
+        final sunday = DateTime(2023, 6, 11); // Sunday
+        final monday = DateTime(2023, 6, 12); // Monday
+
+        // With Sunday as first day of week
+        expect(sunday.isSameWeek(monday, DateTime.sunday), isTrue);
+        // With Monday as first day of week (default)
+        expect(sunday.isSameWeek(monday), isFalse);
+      });
+
+      test('weekOfYear should return correct week number', () {
+        final jan1 = DateTime(2023);
+        final jan15 = DateTime(2023, 1, 15);
+        final dec31 = DateTime(2023, 12, 31);
+
+        expect(jan1.weekOfYear, greaterThan(0));
+        expect(jan15.weekOfYear, greaterThan(jan1.weekOfYear));
+        expect(dec31.weekOfYear, greaterThan(50));
+      });
+    });
+
+    group('leap year methods', () {
+      test('isLeapYear should work correctly', () {
+        expect(DateTime(2020).isLeapYear, isTrue); // Divisible by 4
+        expect(DateTime(2021).isLeapYear, isFalse); // Not divisible by 4
+        expect(DateTime(1900).isLeapYear, isFalse); // Divisible by 100, not 400
+        expect(DateTime(2000).isLeapYear, isTrue); // Divisible by 400
+        expect(DateTime(2004).isLeapYear, isTrue); // Divisible by 4
+      });
+    });
+
+    group('quarter methods', () {
+      test('quarter should return correct quarter', () {
+        expect(DateTime(2023, 1, 15).quarter, equals(1));
+        expect(DateTime(2023, 3, 31).quarter, equals(1));
+        expect(DateTime(2023, 4).quarter, equals(2));
+        expect(DateTime(2023, 6, 30).quarter, equals(2));
+        expect(DateTime(2023, 7).quarter, equals(3));
+        expect(DateTime(2023, 9, 30).quarter, equals(3));
+        expect(DateTime(2023, 10).quarter, equals(4));
+        expect(DateTime(2023, 12, 31).quarter, equals(4));
+      });
+
+      test('startOfQuarter should work correctly', () {
+        final q1Date = DateTime(2023, 2, 15);
+        final q2Date = DateTime(2023, 5, 15);
+        final q3Date = DateTime(2023, 8, 15);
+        final q4Date = DateTime(2023, 11, 15);
+
+        expect(q1Date.startOfQuarter, equals(DateTime(2023)));
+        expect(q2Date.startOfQuarter, equals(DateTime(2023, 4)));
+        expect(q3Date.startOfQuarter, equals(DateTime(2023, 7)));
+        expect(q4Date.startOfQuarter, equals(DateTime(2023, 10)));
+      });
+
+      test('endOfQuarter should work correctly', () {
+        final q1Date = DateTime(2023, 2, 15);
+        final q2Date = DateTime(2023, 5, 15);
+        final q3Date = DateTime(2023, 8, 15);
+        final q4Date = DateTime(2023, 11, 15);
+
+        expect(q1Date.endOfQuarter.month, equals(3));
+        expect(q1Date.endOfQuarter.day, equals(31));
+        expect(q2Date.endOfQuarter.month, equals(6));
+        expect(q2Date.endOfQuarter.day, equals(30));
+        expect(q3Date.endOfQuarter.month, equals(9));
+        expect(q3Date.endOfQuarter.day, equals(30));
+        expect(q4Date.endOfQuarter.month, equals(12));
+        expect(q4Date.endOfQuarter.day, equals(31));
+      });
+
+      test('isSameQuarter should work correctly', () {
+        final jan = DateTime(2023, 1, 15);
+        final mar = DateTime(2023, 3, 20);
+        final jul = DateTime(2023, 7, 10);
+        final janNextYear = DateTime(2024, 1, 15);
+
+        expect(jan.isSameQuarter(mar), isTrue);
+        expect(jan.isSameQuarter(jul), isFalse);
+        expect(jan.isSameQuarter(janNextYear), isFalse);
+      });
+    });
+
+    group('daysInYear', () {
+      test('should return correct days in year', () {
+        expect(DateTime(2020, 6, 15).daysInYear, equals(366)); // Leap year
+        expect(DateTime(2021, 6, 15).daysInYear, equals(365)); // Regular year
+        expect(DateTime(2000).daysInYear, equals(366)); // Leap year
+        expect(DateTime(1900).daysInYear, equals(365)); // Not leap year
+      });
+    });
+
+    group('daysInMonth', () {
+      test('should return correct days in month', () {
+        // Months with 31 days
+        expect(DateTime(2023, 1, 15).daysInMonth, equals(31)); // January
+        expect(DateTime(2023, 3, 15).daysInMonth, equals(31)); // March
+        expect(DateTime(2023, 5, 15).daysInMonth, equals(31)); // May
+        expect(DateTime(2023, 7, 15).daysInMonth, equals(31)); // July
+        expect(DateTime(2023, 8, 15).daysInMonth, equals(31)); // August
+        expect(DateTime(2023, 10, 15).daysInMonth, equals(31)); // October
+        expect(DateTime(2023, 12, 15).daysInMonth, equals(31)); // December
+
+        // Months with 30 days
+        expect(DateTime(2023, 4, 15).daysInMonth, equals(30)); // April
+        expect(DateTime(2023, 6, 15).daysInMonth, equals(30)); // June
+        expect(DateTime(2023, 9, 15).daysInMonth, equals(30)); // September
+        expect(DateTime(2023, 11, 15).daysInMonth, equals(30)); // November
+
+        // February in non-leap year
+        expect(DateTime(2023, 2, 15).daysInMonth, equals(28));
+
+        // February in leap year
+        expect(DateTime(2020, 2, 15).daysInMonth, equals(29));
+        expect(DateTime(2000, 2, 15).daysInMonth, equals(29));
+
+        // February in non-leap year (divisible by 100 but not 400)
+        expect(DateTime(1900, 2, 15).daysInMonth, equals(28));
+      });
+    });
+
+    group('comparison operators', () {
+      test('isSameOrAfter should work correctly', () {
+        final earlier = DateTime(2023, 6, 14);
+        final same = DateTime(2023, 6, 15, 14, 30, 45, 123, 456);
+        final later = DateTime(2023, 6, 16);
+
+        expect(testDate.isSameOrAfter(earlier), isTrue);
+        expect(testDate.isSameOrAfter(same), isTrue);
+        expect(testDate.isSameOrAfter(later), isFalse);
+      });
+
+      test('isSameOrBefore should work correctly', () {
+        final earlier = DateTime(2023, 6, 14);
+        final same = DateTime(2023, 6, 15, 14, 30, 45, 123, 456);
+        final later = DateTime(2023, 6, 16);
+
+        expect(testDate.isSameOrBefore(earlier), isFalse);
+        expect(testDate.isSameOrBefore(same), isTrue);
+        expect(testDate.isSameOrBefore(later), isTrue);
+      });
+
+      test('operators should work correctly', () {
+        final earlier = DateTime(2023, 6, 14);
+        final later = DateTime(2023, 6, 16);
+
+        expect(testDate < later, isTrue);
+        expect(testDate <= testDate, isTrue);
+        expect(testDate > earlier, isTrue);
+        expect(testDate >= testDate, isTrue);
+      });
+
+      test('arithmetic operators should work correctly', () {
+        const duration = Duration(days: 1);
+        final result1 = testDate + duration;
+        final result2 = testDate - duration;
+
+        expect(result1.day, equals(16));
+        expect(result2.day, equals(14));
+      });
+    });
+
+    group('add/subtract methods', () {
+      test('addYears should work correctly', () {
+        final result = testDate.addYears(2);
+
+        expect(result.year, equals(2025));
+        expect(result.month, equals(6));
+        expect(result.day, equals(15));
+      });
+
+      test('addMonths should work correctly', () {
+        final result = testDate.addMonths(3);
+
+        expect(result.year, equals(2023));
+        expect(result.month, equals(9));
+        expect(result.day, equals(15));
+      });
+
+      test('addDays should work correctly without DST', () {
+        final result = testDate.addDays(5);
+
+        expect(result.day, equals(20));
+      });
+
+      test('addDays should work correctly with DST ignored', () {
+        final result = testDate.addDays(5, ignoreDaylightSavings: true);
+
+        expect(result.day, equals(20));
+        expect(result.hour, equals(14));
+        expect(result.minute, equals(30));
+      });
+
+      test('addHours should work correctly', () {
+        final result = testDate.addHours(5);
+
+        expect(result.hour, equals(19));
+      });
+
+      test('addMinutes should work correctly', () {
+        final result = testDate.addMinutes(45);
+
+        expect(result.minute, equals(75)); // This will overflow to next hour
+      });
+
+      test('addSeconds should work correctly', () {
+        final result = testDate.addSeconds(30);
+
+        expect(result.second, equals(75)); // This will overflow to next minute
+      });
+
+      test('addMilliseconds should work correctly', () {
+        final result = testDate.addMilliseconds(500);
+
+        expect(result.millisecond, equals(623));
+      });
+
+      test('addMicroseconds should work correctly', () {
+        final result = testDate.addMicroseconds(300);
+
+        expect(result.microsecond, equals(756));
+      });
+    });
+
+    group('subtract methods', () {
+      test('subYears should work correctly', () {
+        final result = testDate.subYears(2);
+
+        expect(result.year, equals(2021));
+      });
+
+      test('subMonths should work correctly', () {
+        final result = testDate.subMonths(3);
+
+        expect(result.month, equals(3));
+      });
+
+      test('subDays should work correctly', () {
+        final result = testDate.subDays(5);
+
+        expect(result.day, equals(10));
+      });
+
+      test('subHours should work correctly', () {
+        final result = testDate.subHours(5);
+
+        expect(result.hour, equals(9));
+      });
+
+      test('subMinutes should work correctly', () {
+        final result = testDate.subMinutes(15);
+
+        expect(result.minute, equals(15));
+      });
+
+      test('subSeconds should work correctly', () {
+        final result = testDate.subSeconds(30);
+
+        expect(result.second, equals(15));
+      });
+
+      test('subMilliseconds should work correctly', () {
+        final result = testDate.subMilliseconds(50);
+
+        expect(result.millisecond, equals(73));
+      });
+
+      test('subMicroseconds should work correctly', () {
+        final result = testDate.subMicroseconds(200);
+
+        expect(result.microsecond, equals(256));
+      });
+    });
+
+    group('clockTime', () {
+      test('should return ClockTime correctly', () {
+        final clockTime = testDate.clockTime;
+
+        expect(clockTime.hour, equals(14));
+        expect(clockTime.minute, equals(30));
+        expect(clockTime.second, equals(45));
+        expect(clockTime.millisecond, equals(123));
+        expect(clockTime.microsecond, equals(456));
+      });
+    });
+  });
+}

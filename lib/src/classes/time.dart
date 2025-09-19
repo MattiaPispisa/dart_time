@@ -82,6 +82,18 @@ class ClockTime {
     );
   }
 
+  /// Create ClockTime for now (current time)
+  factory ClockTime.now() {
+    final now = DateTime.now();
+    return ClockTime(
+      now.hour,
+      minute: now.minute,
+      second: now.second,
+      millisecond: now.millisecond,
+      microsecond: now.microsecond,
+    );
+  }
+
   /// parse [json] to [ClockTime]
   factory ClockTime.fromJson(Map<String, dynamic> json) {
     return ClockTime(
@@ -92,6 +104,12 @@ class ClockTime {
       millisecond: json['millisecond'] as int,
     );
   }
+
+  /// Create ClockTime for midnight (00:00:00.000000)
+  factory ClockTime.midnight() => ClockTime(0);
+
+  /// Create ClockTime for noon (12:00:00.000000)
+  factory ClockTime.noon() => ClockTime(12);
 
   const ClockTime._(
     this.hour, {
@@ -211,6 +229,171 @@ class ClockTime {
       milliseconds: millisecond,
     );
   }
+
+  /// Add duration to this time, wrapping around 24 hours if necessary
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(23, minute: 30).add(Duration(hours: 1)); // 00:30:00
+  /// ClockTime(10, minute: 45).add(Duration(minutes: 30)); // 11:15:00
+  /// ```
+  ClockTime add(Duration duration) {
+    final totalMicroseconds =
+        toDuration().inMicroseconds + duration.inMicroseconds;
+    final dayMicroseconds = const Duration(days: 1).inMicroseconds;
+    final wrappedMicroseconds = totalMicroseconds % dayMicroseconds;
+
+    final wrappedDuration = Duration(microseconds: wrappedMicroseconds);
+    return ClockTime(
+      wrappedDuration.inHours,
+      minute: wrappedDuration.inMinutes % 60,
+      second: wrappedDuration.inSeconds % 60,
+      millisecond: wrappedDuration.inMilliseconds % 1000,
+      microsecond: wrappedDuration.inMicroseconds % 1000,
+    );
+  }
+
+  /// Subtract duration from this time, wrapping around 24 hours if necessary
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(1, minute: 30).subtract(Duration(hours: 2)); // 23:30:00
+  /// ClockTime(10, minute: 15).subtract(Duration(minutes: 30)); // 09:45:00
+  /// ```
+  ClockTime subtract(Duration duration) {
+    final totalMicroseconds =
+        toDuration().inMicroseconds - duration.inMicroseconds;
+    final dayMicroseconds = const Duration(days: 1).inMicroseconds;
+    final wrappedMicroseconds = totalMicroseconds % dayMicroseconds;
+
+    final wrappedDuration = Duration(microseconds: wrappedMicroseconds);
+    return ClockTime(
+      wrappedDuration.inHours,
+      minute: wrappedDuration.inMinutes % 60,
+      second: wrappedDuration.inSeconds % 60,
+      millisecond: wrappedDuration.inMilliseconds % 1000,
+      microsecond: wrappedDuration.inMicroseconds % 1000,
+    );
+  }
+
+  /// Add hours to this time, wrapping around 24 hours if necessary
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(22).addHours(3); // 01:00:00
+  /// ClockTime(10).addHours(5); // 15:00:00
+  /// ```
+  ClockTime addHours(int hours) => add(Duration(hours: hours));
+
+  /// Add minutes to this time, wrapping around 24 hours if necessary
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(23, minute: 45).addMinutes(30); // 00:15:00
+  /// ClockTime(10, minute: 30).addMinutes(45); // 11:15:00
+  /// ```
+  ClockTime addMinutes(int minutes) => add(Duration(minutes: minutes));
+
+  /// Add seconds to this time, wrapping around 24 hours if necessary
+  ClockTime addSeconds(int seconds) => add(Duration(seconds: seconds));
+
+  /// Format as 12-hour time with AM/PM
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(0).format12Hour; // "12:00 AM"
+  /// ClockTime(13, minute: 30).format12Hour; // "1:30 PM"
+  /// ClockTime(23, minute: 45).format12Hour; // "11:45 PM"
+  /// ```
+  String get format12Hour {
+    final period = hour < 12 ? 'AM' : 'PM';
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+    return '$displayHour:${minute.toString().padLeft(2, '0')} $period';
+  }
+
+  /// Format as HH:MM (24-hour format)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(9, minute: 5).format24Hour; // "09:05"
+  /// ClockTime(15, minute: 30).format24Hour; // "15:30"
+  /// ```
+  String get format24Hour {
+    return '${hour.toString().padLeft(2, '0')}'
+        ':${minute.toString().padLeft(2, '0')}';
+  }
+
+  /// Format as HH:MM:SS
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(9, minute: 5, second: 30).formatWithSeconds; // "09:05:30"
+  /// ```
+  String get formatWithSeconds {
+    return '$format24Hour:${second.toString().padLeft(2, '0')}';
+  }
+
+  /// Check if this is morning time (06:00-11:59)
+  bool get isMorning => hour >= 6 && hour < 12;
+
+  /// Check if this is afternoon time (12:00-17:59)
+  bool get isAfternoon => hour >= 12 && hour < 18;
+
+  /// Check if this is evening time (18:00-21:59)
+  bool get isEvening => hour >= 18 && hour < 22;
+
+  /// Check if this is night time (22:00-05:59)
+  bool get isNight => hour >= 22 || hour < 6;
+
+  /// Check if this is AM (00:00-11:59)
+  bool get isAM => hour < 12;
+
+  /// Check if this is PM (12:00-23:59)
+  bool get isPM => hour >= 12;
+
+  /// Get the time period as a string
+  ///
+  /// Returns "morning", "afternoon", "evening", or "night"
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(8).period; // "morning"
+  /// ClockTime(14).period; // "afternoon"
+  /// ClockTime(19).period; // "evening"
+  /// ClockTime(23).period; // "night"
+  /// ```
+  String get period {
+    if (isMorning) return 'morning';
+    if (isAfternoon) return 'afternoon';
+    if (isEvening) return 'evening';
+    return 'night';
+  }
+
+  /// Get total minutes since midnight
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(1, minute: 30).minutesSinceMidnight; // 90
+  /// ClockTime(12).minutesSinceMidnight; // 720
+  /// ```
+  int get minutesSinceMidnight => hour * 60 + minute;
+
+  /// Get total seconds since midnight
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(0, minute: 1, second: 30).secondsSinceMidnight; // 90
+  /// ```
+  int get secondsSinceMidnight => minutesSinceMidnight * 60 + second;
+
+  /// Get minutes until midnight (next day)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(23, minute: 30).minutesUntilMidnight; // 30
+  /// ClockTime(0).minutesUntilMidnight; // 1440 (24 hours)
+  /// ```
+  int get minutesUntilMidnight => 1440 - minutesSinceMidnight;
 
   @override
   bool operator ==(Object other) {
