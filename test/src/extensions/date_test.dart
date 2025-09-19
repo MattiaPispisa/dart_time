@@ -354,13 +354,43 @@ void main() {
       });
 
       test('weekOfYear should return correct week number', () {
-        final jan1 = DateTime(2023);
-        final jan15 = DateTime(2023, 1, 15);
-        final dec31 = DateTime(2023, 12, 31);
+        // Test specific ISO 8601 week numbers for 2023
 
-        expect(jan1.weekOfYear, greaterThan(0));
-        expect(jan15.weekOfYear, greaterThan(jan1.weekOfYear));
-        expect(dec31.weekOfYear, greaterThan(50));
+        // Sunday, should be week 52 of 2022
+        final jan1_2023 = DateTimeHelper.named(year: 2023, month: 1, day: 1);
+
+        // Monday, should be week 1 of 2023
+        final jan2_2023 = DateTime(2023, 1, 2);
+
+        // Sunday, should be week 2 of 2023
+        final jan15_2023 = DateTime(2023, 1, 15);
+
+        // Thursday, should be around week 24
+        final jun15_2023 = DateTime(2023, 6, 15);
+
+        // Sunday, should be week 52 of 2023
+        final dec31_2023 = DateTime(2023, 12, 31);
+
+        // Jan 1, 2023 is a Sunday and belongs to the previous year's last week
+        expect(jan1_2023.isoWeekOfYear, equals(52));
+
+        // Jan 2, 2023 is a Monday and starts week 1 of 2023
+        expect(jan2_2023.isoWeekOfYear, equals(1));
+
+        // Jan 15, 2023 should be week 2
+        expect(jan15_2023.isoWeekOfYear, equals(2));
+
+        // June 15, 2023 should be around week 24
+        expect(jun15_2023.isoWeekOfYear, equals(24));
+
+        // Dec 31, 2023 should be week 52
+        expect(dec31_2023.isoWeekOfYear, equals(52));
+
+        // Test with leap year boundary
+
+        // Wednesday, should be week 1
+        final jan1_2020 = DateTimeHelper.named(year: 2020, month: 1, day: 1);
+        expect(jan1_2020.isoWeekOfYear, equals(1));
       });
     });
 

@@ -234,12 +234,33 @@ extension DateTimeHelper on DateTime {
   /// final date = DateTime(2023, 6, 15);
   /// print(date.weekOfYear); // 24
   /// ```
-  int get weekOfYear {
+  int get isoWeekOfYear {
     // ISO 8601 week calculation
     final jan4 = DateTime(year, 1, 4);
     final yearStart = jan4._getWeekStart(DateTime.monday);
     final daysDifference = difference(yearStart).inDays;
-    return (daysDifference / 7).floor() + 1;
+    final weekNumber = (daysDifference / 7).floor() + 1;
+
+    // If week number is 0 or negative, it belongs to previous year
+    if (weekNumber <= 0) {
+      // Calculate week number for previous year's last week
+      final prevYear = year - 1;
+      final prevJan4 = DateTime(prevYear, 1, 4);
+      final prevYearStart = prevJan4._getWeekStart(DateTime.monday);
+      final dec31PrevYear = DateTime(prevYear, 12, 31);
+      return ((dec31PrevYear.difference(prevYearStart).inDays) / 7).floor() + 1;
+    }
+
+    // If week number is > 52/53, check if it belongs to next year
+    final dec28 = DateTime(year, 12, 28);
+    final dec28WeekNumber =
+        ((dec28.difference(yearStart).inDays) / 7).floor() + 1;
+
+    if (weekNumber > dec28WeekNumber) {
+      return 1; // Belongs to next year's week 1
+    }
+
+    return weekNumber;
   }
 
   /// check if the year of `this` DateTime is a leap year

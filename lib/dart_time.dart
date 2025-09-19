@@ -4,8 +4,8 @@ library dart_time;
 export 'src/classes/date_range.dart';
 export 'src/classes/granularity.dart';
 export 'src/classes/iso_duration.dart';
-export 'src/classes/time.dart';
-export 'src/classes/time_range.dart';
+export 'src/classes/clock_time.dart';
+export 'src/classes/clock_time_range.dart';
 
 export 'src/extensions/date.dart';
 export 'src/extensions/duration.dart';
