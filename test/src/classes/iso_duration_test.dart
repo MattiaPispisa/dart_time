@@ -124,10 +124,14 @@ void main() {
 
       test('should throw ArgumentError for invalid format', () {
         expect(() => ISODuration.parse('invalid'), throwsArgumentError);
-        expect(() => ISODuration.parse('1Y2M3D'),
-            throwsArgumentError); // Missing P
-        expect(() => ISODuration.parse('P1Y2M3D4H5M6S'),
-            throwsArgumentError); // Missing T
+        expect(
+          () => ISODuration.parse('1Y2M3D'),
+          throwsArgumentError,
+        ); // Missing P
+        expect(
+          () => ISODuration.parse('P1Y2M3D4H5M6S'),
+          throwsArgumentError,
+        ); // Missing T
         expect(() => ISODuration.parse(''), throwsArgumentError);
       });
     });

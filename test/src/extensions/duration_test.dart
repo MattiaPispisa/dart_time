@@ -281,17 +281,25 @@ void main() {
   group('DoubleDurationHelper', () {
     test('fractionalHours should work correctly', () {
       expect(
-          1.5.fractionalHours, equals(const Duration(hours: 1, minutes: 30)));
+        1.5.fractionalHours,
+        equals(const Duration(hours: 1, minutes: 30)),
+      );
       expect(
-          2.25.fractionalHours, equals(const Duration(hours: 2, minutes: 15)));
+        2.25.fractionalHours,
+        equals(const Duration(hours: 2, minutes: 15)),
+      );
       expect(0.5.fractionalHours, equals(const Duration(minutes: 30)));
     });
 
     test('fractionalMinutes should work correctly', () {
-      expect(1.5.fractionalMinutes,
-          equals(const Duration(minutes: 1, seconds: 30)));
-      expect(2.25.fractionalMinutes,
-          equals(const Duration(minutes: 2, seconds: 15)));
+      expect(
+        1.5.fractionalMinutes,
+        equals(const Duration(minutes: 1, seconds: 30)),
+      );
+      expect(
+        2.25.fractionalMinutes,
+        equals(const Duration(minutes: 2, seconds: 15)),
+      );
       expect(0.5.fractionalMinutes, equals(const Duration(seconds: 30)));
     });
 
@@ -343,10 +351,14 @@ void main() {
       final duration = 1.5.fractionalDays + 2.25.fractionalHours + 30.minutes;
 
       expect(duration.inDays, equals(1));
-      expect(duration.inHours % 24,
-          equals(14)); // 12 + 2.25 = 14.25, truncated to 14
-      expect(duration.inMinutes % 60,
-          equals(45)); // .25 hours + 30 minutes = 45 minutes
+      expect(
+        duration.inHours % 24,
+        equals(14),
+      ); // 12 + 2.25 = 14.25, truncated to 14
+      expect(
+        duration.inMinutes % 60,
+        equals(45),
+      ); // .25 hours + 30 minutes = 45 minutes
     });
 
     test('should roundtrip ISO conversions correctly', () {

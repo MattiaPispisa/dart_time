@@ -276,9 +276,10 @@ void main() {
 
         expect(steps.length, equals(3));
         expect(
-            steps.last.isBefore(range.end) ||
-                steps.last.isAtSameMomentAs(range.end),
-            isTrue);
+          steps.last.isBefore(range.end) ||
+              steps.last.isAtSameMomentAs(range.end),
+          isTrue,
+        );
       });
     });
 

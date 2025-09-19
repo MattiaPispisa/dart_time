@@ -24,19 +24,31 @@ class ClockTime {
     }
     if (minute < 0 || minute > 59) {
       throw ArgumentError.value(
-          minute, 'minute', 'Minute must be between 0 and 59');
+        minute,
+        'minute',
+        'Minute must be between 0 and 59',
+      );
     }
     if (second < 0 || second > 59) {
       throw ArgumentError.value(
-          second, 'second', 'Second must be between 0 and 59');
+        second,
+        'second',
+        'Second must be between 0 and 59',
+      );
     }
     if (millisecond < 0 || millisecond > 999) {
       throw ArgumentError.value(
-          millisecond, 'millisecond', 'Millisecond must be between 0 and 999');
+        millisecond,
+        'millisecond',
+        'Millisecond must be between 0 and 999',
+      );
     }
     if (microsecond < 0 || microsecond > 999) {
       throw ArgumentError.value(
-          microsecond, 'microsecond', 'Microsecond must be between 0 and 999');
+        microsecond,
+        'microsecond',
+        'Microsecond must be between 0 and 999',
+      );
     }
 
     return ClockTime._(
@@ -464,7 +476,10 @@ _SecMillsMicro _parseSecondsMillisecondsMicroseconds(List<String> parts) {
   final milliseconds = p2 ~/ 1000;
 
   return _SecMillsMicro(
-      seconds: seconds, milliseconds: milliseconds, microseconds: microseconds);
+    seconds: seconds,
+    milliseconds: milliseconds,
+    microseconds: microseconds,
+  );
 }
 
 class _DHM {
