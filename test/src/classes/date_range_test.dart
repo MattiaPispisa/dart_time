@@ -37,6 +37,13 @@ void main() {
         expect(range.start, equals(date.startOfDay));
         expect(range.end, equals(date.endOfDay));
       });
+
+      test('should create range for today', () {
+        final range = DartDateRange.today();
+
+        expect(range.start, equals(DateTime.now().startOfDay));
+        expect(range.end, equals(DateTime.now().endOfDay));
+      });
     });
 
     group('DartDateRange.fromJson', () {
@@ -276,9 +283,10 @@ void main() {
 
         expect(steps.length, equals(3));
         expect(
-            steps.last.isBefore(range.end) ||
-                steps.last.isAtSameMomentAs(range.end),
-            isTrue);
+          steps.last.isBefore(range.end) ||
+              steps.last.isAtSameMomentAs(range.end),
+          isTrue,
+        );
       });
     });
 

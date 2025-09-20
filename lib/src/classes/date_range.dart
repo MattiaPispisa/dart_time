@@ -7,6 +7,21 @@ class DartDateRange {
   /// Creates a new [DartDateRange] instance.
   ///
   /// If [start] is after [end], an [ArgumentError] is thrown.
+  ///
+  /// Example:
+  /// ```dart
+  /// // A week range
+  /// final week = DartDateRange(
+  ///   start: DateTime(2023, 6, 1),
+  ///   end: DateTime(2023, 6, 7),
+  /// );
+  ///
+  /// // A quarter range
+  /// final q2 = DartDateRange(
+  ///   start: DateTime(2023, 4, 1),
+  ///   end: DateTime(2023, 6, 30),
+  /// );
+  /// ```
   factory DartDateRange({
     required DateTime start,
     required DateTime end,
@@ -24,6 +39,15 @@ class DartDateRange {
 
   /// create a new [DartDateRange] instance for [date]
   /// (`startOfDay` to `endOfDay`)
+  ///
+  /// Example:
+  /// ```dart
+  /// final today = DartDateRange.day(DateTime(2023, 6, 15));
+  /// // From 2023-06-15 00:00:00.000 to 2023-06-15 23:59:59.999
+  ///
+  /// final someDay = DartDateRange.day(DateTime.now());
+  /// // Today from midnight to end of day
+  /// ```
   factory DartDateRange.day(DateTime date) {
     return DartDateRange(
       start: date.startOfDay,
@@ -31,10 +55,19 @@ class DartDateRange {
     );
   }
 
-  const DartDateRange._({
-    required this.start,
-    required this.end,
-  });
+  /// create a new [DartDateRange] instance for today
+  /// (`startOfDay` to `endOfDay`)
+  ///
+  /// This function internally use [DateTime.now] hence impure.
+  ///
+  /// Example:
+  /// ```dart
+  /// final today = DartDateRange.today();
+  /// // Today from midnight to end of day
+  /// ```
+  factory DartDateRange.today() {
+    return DartDateRange.day(DateTime.now());
+  }
 
   /// parse [json] to [DartDateRange]
   factory DartDateRange.fromJson(Map<String, dynamic> json) {
@@ -43,6 +76,11 @@ class DartDateRange {
       start: DateTime.parse(json['start'] as String),
     );
   }
+
+  const DartDateRange._({
+    required this.start,
+    required this.end,
+  });
 
   /// the start of the range
   final DateTime start;
@@ -62,6 +100,19 @@ class DartDateRange {
   }
 
   /// check if [date] is within the range
+  ///
+  /// Example:
+  /// ```dart
+  /// final week = DartDateRange(
+  ///   start: DateTime(2023, 6, 1),
+  ///   end: DateTime(2023, 6, 7),
+  /// );
+  ///
+  /// week.includes(DateTime(2023, 6, 3));   // true
+  /// week.includes(DateTime(2023, 6, 10));  // false
+  /// week.includes(DateTime(2023, 6, 1));   // true (start date)
+  /// week.includes(DateTime(2023, 6, 7));   // true (end date)
+  /// ```
   bool includes(DateTime date) =>
       (date.isSameOrAfter(start)) && (date.isSameOrBefore(end));
 
@@ -124,6 +175,17 @@ class DartDateRange {
       includes(range.start) && includes(range.end);
 
   /// get the duration of the range
+  ///
+  /// Example:
+  /// ```dart
+  /// final week = DartDateRange(
+  ///   start: DateTime(2023, 6, 1),
+  ///   end: DateTime(2023, 6, 7),
+  /// );
+  ///
+  /// print(week.duration.inDays);  // 6
+  /// print(week.duration.inHours); // 144
+  /// ```
   Duration get duration => end.difference(start);
 
   /// Generate DateTime instances within the range
@@ -150,6 +212,20 @@ class DartDateRange {
   }
 
   /// get the dates in the range
+  /// ([step] with `Duration(days: 1)`)
+  ///
+  /// Example:
+  /// ```dart
+  /// final weekend = DartDateRange(
+  ///   start: DateTime(2023, 6, 3),  // Saturday
+  ///   end: DateTime(2023, 6, 4),    // Sunday
+  /// );
+  ///
+  /// final allDates = weekend.dates.toList();
+  /// // [2023-06-03 00:00:00.000, 2023-06-04 00:00:00.000]
+  ///
+  /// print(allDates.length); // 2
+  /// ```
   Iterable<DateTime> get dates => step(const Duration(days: 1));
 
   /// check if the range is multiple days

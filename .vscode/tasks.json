@@ -26,10 +26,27 @@
       "problemMatcher": []
     },
     {
-      "label": "Pre publish",
+      "label": "Dry run publish",
       "type": "shell",
-      "dependsOn": ["Format Code", "Analyze Code", "Test Code"],
+      "command": "dart pub publish --dry-run",
+      "problemMatcher": []
+    },
+    {
+      "label": "Ensure publish",
+      "type": "shell",
+      "dependsOn": [
+        "Format Code",
+        "Analyze Code",
+        "Test Code",
+        "Dry run publish"
+      ],
       "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Publish",
+      "type": "shell",
+      "command": "dart pub publish && dart run script/post_publish.dart",
       "problemMatcher": []
     }
   ]

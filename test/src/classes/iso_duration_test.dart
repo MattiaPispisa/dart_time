@@ -122,12 +122,76 @@ void main() {
         expect(duration.seconds, equals(0));
       });
 
+      test('should parse negative duration', () {
+        final duration = ISODuration.parse('-P1Y2M3DT4H5M6S');
+
+        expect(duration.years, equals(-1));
+        expect(duration.months, equals(-2));
+        expect(duration.days, equals(-3));
+        expect(duration.weeks, equals(0));
+        expect(duration.hours, equals(-4));
+        expect(duration.minutes, equals(-5));
+        expect(duration.seconds, equals(-6));
+      });
+
+      test('should parse positive duration with explicit + sign', () {
+        final duration = ISODuration.parse('+P1Y2M3DT4H5M6S');
+
+        expect(duration.years, equals(1));
+        expect(duration.months, equals(2));
+        expect(duration.days, equals(3));
+        expect(duration.weeks, equals(0));
+        expect(duration.hours, equals(4));
+        expect(duration.minutes, equals(5));
+        expect(duration.seconds, equals(6));
+      });
+
+      test('should parse negative period-only duration', () {
+        final duration = ISODuration.parse('-P2Y6M');
+
+        expect(duration.years, equals(-2));
+        expect(duration.months, equals(-6));
+        expect(duration.days, equals(0));
+        expect(duration.weeks, equals(0));
+        expect(duration.hours, equals(0));
+        expect(duration.minutes, equals(0));
+        expect(duration.seconds, equals(0));
+      });
+
+      test('should parse negative time-only duration', () {
+        final duration = ISODuration.parse('-PT5H30M');
+
+        expect(duration.years, equals(0));
+        expect(duration.months, equals(0));
+        expect(duration.days, equals(0));
+        expect(duration.weeks, equals(0));
+        expect(duration.hours, equals(-5));
+        expect(duration.minutes, equals(-30));
+        expect(duration.seconds, equals(0));
+      });
+
+      test('should parse negative weeks duration', () {
+        final duration = ISODuration.parse('-P3W');
+
+        expect(duration.years, equals(0));
+        expect(duration.months, equals(0));
+        expect(duration.days, equals(0));
+        expect(duration.weeks, equals(-3));
+        expect(duration.hours, equals(0));
+        expect(duration.minutes, equals(0));
+        expect(duration.seconds, equals(0));
+      });
+
       test('should throw ArgumentError for invalid format', () {
         expect(() => ISODuration.parse('invalid'), throwsArgumentError);
-        expect(() => ISODuration.parse('1Y2M3D'),
-            throwsArgumentError); // Missing P
-        expect(() => ISODuration.parse('P1Y2M3D4H5M6S'),
-            throwsArgumentError); // Missing T
+        expect(
+          () => ISODuration.parse('1Y2M3D'),
+          throwsArgumentError,
+        ); // Missing P
+        expect(
+          () => ISODuration.parse('P1Y2M3D4H5M6S'),
+          throwsArgumentError,
+        ); // Missing T
         expect(() => ISODuration.parse(''), throwsArgumentError);
       });
     });
@@ -150,6 +214,21 @@ void main() {
 
       test('should return null for empty string', () {
         final duration = ISODuration.tryParse('');
+
+        expect(duration, isNull);
+      });
+
+      test('should parse negative duration with tryParse', () {
+        final duration = ISODuration.tryParse('-P1Y2M3D');
+
+        expect(duration, isNotNull);
+        expect(duration!.years, equals(-1));
+        expect(duration.months, equals(-2));
+        expect(duration.days, equals(-3));
+      });
+
+      test('should return null for invalid negative format with tryParse', () {
+        final duration = ISODuration.tryParse('-invalid');
 
         expect(duration, isNull);
       });
@@ -394,6 +473,58 @@ void main() {
         expect(duration.seconds, equals(0));
       });
 
+      test('should convert negative duration to ISO string', () {
+        final duration = ISODuration(
+          years: -1,
+          months: -2,
+          days: -3,
+          hours: -4,
+          minutes: -5,
+          seconds: -6,
+        );
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('-P1Y2M3DT4H5M6S'));
+      });
+
+      test('should convert negative period-only duration to ISO string', () {
+        final duration = ISODuration(years: -2, months: -6);
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('-P2Y6M'));
+      });
+
+      test('should convert negative time-only duration to ISO string', () {
+        final duration = ISODuration(hours: -5, minutes: -30);
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('-PT5H30M'));
+      });
+
+      test('should convert negative weeks duration to ISO string', () {
+        final duration = ISODuration(weeks: -3);
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('-P3W'));
+      });
+
+      test('should convert zero duration to ISO string', () {
+        final duration = ISODuration();
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('P0D'));
+      });
+
+      test('should handle mixed positive and negative components correctly',
+          () {
+        // According to ISO 8601, if any component is negative,
+        // the entire duration is negative
+        final duration = ISODuration(years: 1, months: -2, days: 3);
+        final isoString = duration.toIso();
+
+        expect(isoString, equals('-P1Y2M3D'));
+      });
+
       test('should roundtrip parse and toIso correctly', () {
         const originalIso = 'P1Y2M3DT4H5M6S';
         final duration = ISODuration.parse(originalIso);
@@ -408,6 +539,55 @@ void main() {
         final regeneratedIso = duration.toIso();
 
         expect(regeneratedIso, equals(originalIso));
+      });
+
+      test('should roundtrip negative parse and toIso correctly', () {
+        const originalIso = '-P1Y2M3DT4H5M6S';
+        final duration = ISODuration.parse(originalIso);
+        final regeneratedIso = duration.toIso();
+
+        expect(regeneratedIso, equals(originalIso));
+      });
+    });
+
+    group('validation methods', () {
+      test('isNegative should work correctly', () {
+        expect(ISODuration(years: -1).isNegative, isTrue);
+        expect(ISODuration(months: -1).isNegative, isTrue);
+        expect(ISODuration(weeks: -1).isNegative, isTrue);
+        expect(ISODuration(days: -1).isNegative, isTrue);
+        expect(ISODuration(hours: -1).isNegative, isTrue);
+        expect(ISODuration(minutes: -1).isNegative, isTrue);
+        expect(ISODuration(seconds: -1).isNegative, isTrue);
+        expect(ISODuration(years: 1).isNegative, isFalse);
+        expect(ISODuration().isNegative, isFalse);
+      });
+
+      test('isPositive should work correctly', () {
+        expect(ISODuration(years: 1).isPositive, isTrue);
+        expect(ISODuration(months: 1).isPositive, isTrue);
+        expect(ISODuration(weeks: 1).isPositive, isTrue);
+        expect(ISODuration(days: 1).isPositive, isTrue);
+        expect(ISODuration(hours: 1).isPositive, isTrue);
+        expect(ISODuration(minutes: 1).isPositive, isTrue);
+        expect(ISODuration(seconds: 1).isPositive, isTrue);
+        expect(ISODuration(years: -1).isPositive, isFalse);
+        expect(ISODuration().isPositive, isFalse);
+      });
+
+      test('isZero should work correctly', () {
+        expect(ISODuration().isZero, isTrue);
+        expect(ISODuration(years: 0, months: 0, days: 0).isZero, isTrue);
+        expect(ISODuration(years: 1).isZero, isFalse);
+        expect(ISODuration(years: -1).isZero, isFalse);
+        expect(ISODuration(seconds: 1).isZero, isFalse);
+      });
+
+      test('should handle mixed signs correctly', () {
+        final duration = ISODuration(years: 1, months: -2);
+        expect(duration.isNegative, isTrue);
+        expect(duration.isPositive, isTrue);
+        expect(duration.isZero, isFalse);
       });
     });
   });

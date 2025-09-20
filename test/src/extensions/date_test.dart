@@ -74,8 +74,13 @@ void main() {
 
     group('copyTime', () {
       test('should copy ClockTime to DateTime', () {
-        final time = ClockTime(10,
-            minute: 20, second: 30, millisecond: 100, microsecond: 200);
+        final time = ClockTime(
+          10,
+          minute: 20,
+          second: 30,
+          millisecond: 100,
+          microsecond: 200,
+        );
         final copied = testDate.copyTime(time);
 
         expect(copied.year, equals(2023));
@@ -179,6 +184,8 @@ void main() {
         expect(result.hour, equals(23));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfMonth should work correctly', () {
@@ -200,6 +207,8 @@ void main() {
 
         // February non-leap year - 28 days
         expect(DateTime(2023, 2, 15).endOfMonth.day, equals(28));
+        expect(DateTime(2023, 2, 15).endOfMonth.millisecond, equals(999));
+        expect(DateTime(2023, 2, 15).endOfMonth.microsecond, equals(999));
 
         // February leap year - 29 days
         expect(DateTime(2020, 2, 15).endOfMonth.day, equals(29));
@@ -220,6 +229,8 @@ void main() {
         expect(result.hour, equals(23));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfHour should work correctly', () {
@@ -231,6 +242,8 @@ void main() {
         expect(result.hour, equals(14));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfMinute should work correctly', () {
@@ -242,6 +255,8 @@ void main() {
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfSecond should work correctly', () {
@@ -254,6 +269,7 @@ void main() {
         expect(result.minute, equals(30));
         expect(result.second, equals(45));
         expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
     });
 
@@ -264,6 +280,9 @@ void main() {
         expect(result.day, equals(16));
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(123));
+        expect(result.microsecond, equals(456));
       });
 
       test('previousDay should work correctly', () {
@@ -272,6 +291,9 @@ void main() {
         expect(result.day, equals(14));
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(123));
+        expect(result.microsecond, equals(456));
       });
     });
 
@@ -303,7 +325,7 @@ void main() {
           millisecond: 999, // Different milliseconds
           microsecond: 999, // Different microseconds
         );
-        
+
         final differentSecond = DateTimeHelper.named(
           year: 2023,
           month: 6,
@@ -313,11 +335,18 @@ void main() {
           second: 44, // Different second
         );
 
-        expect(testDate.isGranularSame(sameSecond, TimeGranularity.second), isTrue);
-        expect(testDate.isGranularSame(differentSecond, TimeGranularity.second), isFalse);
+        expect(
+          testDate.isGranularSame(sameSecond, TimeGranularity.second),
+          isTrue,
+        );
+        expect(
+          testDate.isGranularSame(differentSecond, TimeGranularity.second),
+          isFalse,
+        );
       });
 
-      test('isGranularSame should work correctly with milliseconds granularity', () {
+      test('isGranularSame should work correctly with milliseconds granularity',
+          () {
         // testDate: 2023-06-15 14:30:45.123456
         final sameMillisecond = DateTimeHelper.named(
           year: 2023,
@@ -329,7 +358,7 @@ void main() {
           millisecond: 123,
           microsecond: 999, // Different microseconds
         );
-        
+
         final differentMillisecond = DateTimeHelper.named(
           year: 2023,
           month: 6,
@@ -341,11 +370,24 @@ void main() {
           microsecond: 456,
         );
 
-        expect(testDate.isGranularSame(sameMillisecond, TimeGranularity.milliseconds), isTrue);
-        expect(testDate.isGranularSame(differentMillisecond, TimeGranularity.milliseconds), isFalse);
+        expect(
+          testDate.isGranularSame(
+            sameMillisecond,
+            TimeGranularity.milliseconds,
+          ),
+          isTrue,
+        );
+        expect(
+          testDate.isGranularSame(
+            differentMillisecond,
+            TimeGranularity.milliseconds,
+          ),
+          isFalse,
+        );
       });
 
-      test('isGranularSame should work correctly with microseconds granularity', () {
+      test('isGranularSame should work correctly with microseconds granularity',
+          () {
         // testDate: 2023-06-15 14:30:45.123456
         final exactSame = DateTimeHelper.named(
           year: 2023,
@@ -357,7 +399,7 @@ void main() {
           millisecond: 123,
           microsecond: 456,
         );
-        
+
         final differentMicrosecond = DateTimeHelper.named(
           year: 2023,
           month: 6,
@@ -369,8 +411,8 @@ void main() {
           microsecond: 457, // Different microsecond
         );
 
-        expect(testDate.isGranularSame(exactSame, TimeGranularity.microseconds), isTrue);
-        expect(testDate.isGranularSame(differentMicrosecond, TimeGranularity.microseconds), isFalse);
+        expect(testDate.isGranularSame(exactSame), isTrue);
+        expect(testDate.isGranularSame(differentMicrosecond), isFalse);
       });
 
       test('isSameYear should work correctly', () {
@@ -577,6 +619,22 @@ void main() {
     });
 
     group('comparison operators', () {
+      test('isFuture should work correctly', () {
+        final future = DateTime.now().addDays(1);
+        final past = DateTime.now().subDays(2);
+
+        expect(future.isFuture, isTrue);
+        expect(past.isFuture, isFalse);
+      });
+
+      test('isPast should work correctly', () {
+        final future = DateTime.now().addDays(1);
+        final past = DateTime.now().subDays(2);
+
+        expect(future.isPast, isFalse);
+        expect(past.isPast, isTrue);
+      });
+
       test('isSameOrAfter should work correctly', () {
         final earlier = DateTime(2023, 6, 14);
         final same = DateTime(2023, 6, 15, 14, 30, 45, 123, 456);
@@ -587,16 +645,39 @@ void main() {
         expect(testDate.isSameOrAfter(later), isFalse);
 
         // Test with second granularity
-        final sameSecond = DateTime(2023, 6, 15, 14, 30, 45, 999); // Same second, different ms
-        final earlierSecond = DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
-        expect(testDate.isSameOrAfter(sameSecond, TimeGranularity.second), isTrue);
-        expect(testDate.isSameOrAfter(earlierSecond, TimeGranularity.second), isTrue);
+        final sameSecond =
+            DateTime(2023, 6, 15, 14, 30, 45, 999); // Same second, different ms
+        final earlierSecond =
+            DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
+        expect(
+          testDate.isSameOrAfter(sameSecond, TimeGranularity.second),
+          isTrue,
+        );
+        expect(
+          testDate.isSameOrAfter(earlierSecond, TimeGranularity.second),
+          isTrue,
+        );
 
         // Test with milliseconds granularity
-        final sameMs = DateTime(2023, 6, 15, 14, 30, 45, 123, 999); // Same ms, different μs
+        final sameMs = DateTime(
+          2023,
+          6,
+          15,
+          14,
+          30,
+          45,
+          123,
+          999,
+        ); // Same ms, different μs
         final earlierMs = DateTime(2023, 6, 15, 14, 30, 45, 122); // 1ms earlier
-        expect(testDate.isSameOrAfter(sameMs, TimeGranularity.milliseconds), isTrue);
-        expect(testDate.isSameOrAfter(earlierMs, TimeGranularity.milliseconds), isTrue);
+        expect(
+          testDate.isSameOrAfter(sameMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
+        expect(
+          testDate.isSameOrAfter(earlierMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
       });
 
       test('isSameOrBefore should work correctly', () {
@@ -609,16 +690,38 @@ void main() {
         expect(testDate.isSameOrBefore(later), isTrue);
 
         // Test with second granularity
-        final sameSecond = DateTime(2023, 6, 15, 14, 30, 45, 999); // Same second, different ms
+        final sameSecond =
+            DateTime(2023, 6, 15, 14, 30, 45, 999); // Same second, different ms
         final laterSecond = DateTime(2023, 6, 15, 14, 30, 46); // 1 second later
-        expect(testDate.isSameOrBefore(sameSecond, TimeGranularity.second), isTrue);
-        expect(testDate.isSameOrBefore(laterSecond, TimeGranularity.second), isTrue);
+        expect(
+          testDate.isSameOrBefore(sameSecond, TimeGranularity.second),
+          isTrue,
+        );
+        expect(
+          testDate.isSameOrBefore(laterSecond, TimeGranularity.second),
+          isTrue,
+        );
 
         // Test with milliseconds granularity
-        final sameMs = DateTime(2023, 6, 15, 14, 30, 45, 123, 999); // Same ms, different μs
+        final sameMs = DateTime(
+          2023,
+          6,
+          15,
+          14,
+          30,
+          45,
+          123,
+          999,
+        ); // Same ms, different μs
         final laterMs = DateTime(2023, 6, 15, 14, 30, 45, 124); // 1ms later
-        expect(testDate.isSameOrBefore(sameMs, TimeGranularity.milliseconds), isTrue);
-        expect(testDate.isSameOrBefore(laterMs, TimeGranularity.milliseconds), isTrue);
+        expect(
+          testDate.isSameOrBefore(sameMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
+        expect(
+          testDate.isSameOrBefore(laterMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
       });
 
       test('isGranularAfter should work correctly', () {
@@ -640,16 +743,29 @@ void main() {
         expect(testDate.isGranularAfter(sameDay, TimeGranularity.hour), isTrue);
 
         // Second granularity
-        final earlierSecond = DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
+        final earlierSecond =
+            DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
         final laterSecond = DateTime(2023, 6, 15, 14, 30, 46); // 1 second later
-        expect(testDate.isGranularAfter(earlierSecond, TimeGranularity.second), isTrue);
-        expect(testDate.isGranularAfter(laterSecond, TimeGranularity.second), isFalse);
+        expect(
+          testDate.isGranularAfter(earlierSecond, TimeGranularity.second),
+          isTrue,
+        );
+        expect(
+          testDate.isGranularAfter(laterSecond, TimeGranularity.second),
+          isFalse,
+        );
 
         // Milliseconds granularity
         final earlierMs = DateTime(2023, 6, 15, 14, 30, 45, 122); // 1ms earlier
         final laterMs = DateTime(2023, 6, 15, 14, 30, 45, 124); // 1ms later
-        expect(testDate.isGranularAfter(earlierMs, TimeGranularity.milliseconds), isTrue);
-        expect(testDate.isGranularAfter(laterMs, TimeGranularity.milliseconds), isFalse);
+        expect(
+          testDate.isGranularAfter(earlierMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
+        expect(
+          testDate.isGranularAfter(laterMs, TimeGranularity.milliseconds),
+          isFalse,
+        );
       });
 
       test('isGranularBefore should work correctly', () {
@@ -663,24 +779,46 @@ void main() {
         expect(testDate.isGranularBefore(sameDay), isTrue);
 
         // Day granularity
-        expect(testDate.isGranularBefore(earlier, TimeGranularity.day), isFalse);
+        expect(
+          testDate.isGranularBefore(earlier, TimeGranularity.day),
+          isFalse,
+        );
         expect(testDate.isGranularBefore(later, TimeGranularity.day), isTrue);
-        expect(testDate.isGranularBefore(sameDay, TimeGranularity.day), isFalse);
+        expect(
+          testDate.isGranularBefore(sameDay, TimeGranularity.day),
+          isFalse,
+        );
 
         // Hour granularity
-        expect(testDate.isGranularBefore(sameDay, TimeGranularity.hour), isTrue);
+        expect(
+          testDate.isGranularBefore(sameDay, TimeGranularity.hour),
+          isTrue,
+        );
 
         // Second granularity
-        final earlierSecond = DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
+        final earlierSecond =
+            DateTime(2023, 6, 15, 14, 30, 44); // 1 second earlier
         final laterSecond = DateTime(2023, 6, 15, 14, 30, 46); // 1 second later
-        expect(testDate.isGranularBefore(earlierSecond, TimeGranularity.second), isFalse);
-        expect(testDate.isGranularBefore(laterSecond, TimeGranularity.second), isTrue);
+        expect(
+          testDate.isGranularBefore(earlierSecond, TimeGranularity.second),
+          isFalse,
+        );
+        expect(
+          testDate.isGranularBefore(laterSecond, TimeGranularity.second),
+          isTrue,
+        );
 
         // Milliseconds granularity
         final earlierMs = DateTime(2023, 6, 15, 14, 30, 45, 122); // 1ms earlier
         final laterMs = DateTime(2023, 6, 15, 14, 30, 45, 124); // 1ms later
-        expect(testDate.isGranularBefore(earlierMs, TimeGranularity.milliseconds), isFalse);
-        expect(testDate.isGranularBefore(laterMs, TimeGranularity.milliseconds), isTrue);
+        expect(
+          testDate.isGranularBefore(earlierMs, TimeGranularity.milliseconds),
+          isFalse,
+        );
+        expect(
+          testDate.isGranularBefore(laterMs, TimeGranularity.milliseconds),
+          isTrue,
+        );
       });
 
       test('operators should work correctly', () {
@@ -746,9 +884,10 @@ void main() {
         expect(result.hour, equals(19));
         expect(result.minute, equals(30));
         expect(result.second, equals(45));
-        
+
         // Test hour overflow
-        final overflowResult = testDate.addHours(10, ignoreDaylightSavings: true);
+        final overflowResult =
+            testDate.addHours(10, ignoreDaylightSavings: true);
         expect(overflowResult.day, equals(16)); // Should wrap to next day
         expect(overflowResult.hour, equals(0)); // 14 + 10 = 24 -> 0
       });
@@ -765,9 +904,10 @@ void main() {
         expect(result.hour, equals(15)); // 30 + 45 = 75 -> 15 (next hour)
         expect(result.minute, equals(15)); // 75 % 60 = 15
         expect(result.second, equals(45));
-        
+
         // Test minute overflow across day boundary
-        final overflowResult = testDate.addMinutes(600, ignoreDaylightSavings: true); // 10 hours
+        final overflowResult =
+            testDate.addMinutes(600, ignoreDaylightSavings: true); // 10 hours
         expect(overflowResult.day, equals(16)); // Should wrap to next day
         expect(overflowResult.hour, equals(0)); // 14 + 10 = 24 -> 0
         expect(overflowResult.minute, equals(30));
@@ -785,9 +925,12 @@ void main() {
         expect(result.minute, equals(31)); // 45 + 30 = 75 -> 31 (next minute)
         expect(result.second, equals(15)); // 75 % 60 = 15
         expect(result.hour, equals(14));
-        
+
         // Test second overflow across hour boundary
-        final overflowResult = testDate.addSeconds(1800, ignoreDaylightSavings: true); // 30 minutes
+        final overflowResult = testDate.addSeconds(
+          1800,
+          ignoreDaylightSavings: true,
+        ); // 30 minutes
         expect(overflowResult.hour, equals(15)); // Should wrap to next hour
         expect(overflowResult.minute, equals(0)); // 30 + 30 = 60 -> 0
         expect(overflowResult.second, equals(45));
@@ -799,16 +942,25 @@ void main() {
         expect(result.millisecond, equals(623));
       });
 
-      test('addMilliseconds should work correctly with ignoreDaylightSavings', () {
-        final result = testDate.addMilliseconds(500, ignoreDaylightSavings: true);
+      test('addMilliseconds should work correctly with ignoreDaylightSavings',
+          () {
+        final result =
+            testDate.addMilliseconds(500, ignoreDaylightSavings: true);
 
         expect(result.millisecond, equals(623)); // 123 + 500 = 623
         expect(result.second, equals(45));
-        
+
         // Test millisecond overflow
-        final overflowResult = testDate.addMilliseconds(1500, ignoreDaylightSavings: true);
-        expect(overflowResult.second, equals(46)); // 45 + 1 = 46 (overflow from 1500ms)
-        expect(overflowResult.millisecond, equals(623)); // (123 + 1500) % 1000 = 623
+        final overflowResult =
+            testDate.addMilliseconds(1500, ignoreDaylightSavings: true);
+        expect(
+          overflowResult.second,
+          equals(46),
+        ); // 45 + 1 = 46 (overflow from 1500ms)
+        expect(
+          overflowResult.millisecond,
+          equals(623),
+        ); // (123 + 1500) % 1000 = 623
       });
 
       test('addMicroseconds should work correctly', () {
@@ -817,16 +969,25 @@ void main() {
         expect(result.microsecond, equals(756));
       });
 
-      test('addMicroseconds should work correctly with ignoreDaylightSavings', () {
-        final result = testDate.addMicroseconds(300, ignoreDaylightSavings: true);
+      test('addMicroseconds should work correctly with ignoreDaylightSavings',
+          () {
+        final result =
+            testDate.addMicroseconds(300, ignoreDaylightSavings: true);
 
         expect(result.microsecond, equals(756)); // 456 + 300 = 756
         expect(result.millisecond, equals(123));
-        
+
         // Test microsecond overflow
-        final overflowResult = testDate.addMicroseconds(1500, ignoreDaylightSavings: true);
-        expect(overflowResult.millisecond, equals(124)); // 123 + 1 = 124 (overflow from 1500μs)
-        expect(overflowResult.microsecond, equals(956)); // (456 + 1500) % 1000 = 956
+        final overflowResult =
+            testDate.addMicroseconds(1500, ignoreDaylightSavings: true);
+        expect(
+          overflowResult.millisecond,
+          equals(124),
+        ); // 123 + 1 = 124 (overflow from 1500μs)
+        expect(
+          overflowResult.microsecond,
+          equals(956),
+        ); // (456 + 1500) % 1000 = 956
       });
     });
 
@@ -889,6 +1050,114 @@ void main() {
         expect(clockTime.second, equals(45));
         expect(clockTime.millisecond, equals(123));
         expect(clockTime.microsecond, equals(456));
+      });
+    });
+
+    group('weekday methods', () {
+      test('isMonday should work correctly', () {
+        final monday = DateTime(2023, 6, 12); // Monday
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+
+        expect(monday.isMonday, isTrue);
+        expect(tuesday.isMonday, isFalse);
+      });
+
+      test('isTuesday should work correctly', () {
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+
+        expect(tuesday.isTuesday, isTrue);
+        expect(wednesday.isTuesday, isFalse);
+      });
+
+      test('isWednesday should work correctly', () {
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+        final thursday = DateTime(2023, 6, 15); // Thursday
+
+        expect(wednesday.isWednesday, isTrue);
+        expect(thursday.isWednesday, isFalse);
+      });
+
+      test('isThursday should work correctly', () {
+        final thursday = DateTime(2023, 6, 15); // Thursday
+        final friday = DateTime(2023, 6, 16); // Friday
+
+        expect(thursday.isThursday, isTrue);
+        expect(friday.isThursday, isFalse);
+      });
+
+      test('isFriday should work correctly', () {
+        final friday = DateTime(2023, 6, 16); // Friday
+        final saturday = DateTime(2023, 6, 17); // Saturday
+
+        expect(friday.isFriday, isTrue);
+        expect(saturday.isFriday, isFalse);
+      });
+
+      test('isSaturday should work correctly', () {
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+
+        expect(saturday.isSaturday, isTrue);
+        expect(sunday.isSaturday, isFalse);
+      });
+
+      test('isSunday should work correctly', () {
+        final sunday = DateTime(2023, 6, 18); // Sunday
+        final monday = DateTime(2023, 6, 19); // Monday
+
+        expect(sunday.isSunday, isTrue);
+        expect(monday.isSunday, isFalse);
+      });
+
+      test('isWeekend should work correctly', () {
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+        final monday = DateTime(2023, 6, 19); // Monday
+        final friday = DateTime(2023, 6, 16); // Friday
+
+        expect(saturday.isWeekend, isTrue);
+        expect(sunday.isWeekend, isTrue);
+        expect(monday.isWeekend, isFalse);
+        expect(friday.isWeekend, isFalse);
+      });
+
+      test('isWeekday should work correctly', () {
+        final monday = DateTime(2023, 6, 12); // Monday
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+        final thursday = DateTime(2023, 6, 15); // Thursday
+        final friday = DateTime(2023, 6, 16); // Friday
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+
+        expect(monday.isWeekday, isTrue);
+        expect(tuesday.isWeekday, isTrue);
+        expect(wednesday.isWeekday, isTrue);
+        expect(thursday.isWeekday, isTrue);
+        expect(friday.isWeekday, isTrue);
+        expect(saturday.isWeekday, isFalse);
+        expect(sunday.isWeekday, isFalse);
+      });
+
+      test('all weekday methods should work with different times', () {
+        // Test with different times on the same days
+        // to ensure time doesn't affect weekday
+        final mondayMorning = DateTime(2023, 6, 12, 8, 30);
+        final mondayEvening = DateTime(2023, 6, 12, 22, 45);
+
+        expect(mondayMorning.isMonday, isTrue);
+        expect(mondayEvening.isMonday, isTrue);
+        expect(mondayMorning.isWeekday, isTrue);
+        expect(mondayEvening.isWeekday, isTrue);
+
+        final saturdayMorning = DateTime(2023, 6, 17, 9);
+        final saturdayEvening = DateTime(2023, 6, 17, 23, 59);
+
+        expect(saturdayMorning.isSaturday, isTrue);
+        expect(saturdayEvening.isSaturday, isTrue);
+        expect(saturdayMorning.isWeekend, isTrue);
+        expect(saturdayEvening.isWeekend, isTrue);
       });
     });
   });

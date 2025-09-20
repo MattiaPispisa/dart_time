@@ -171,8 +171,13 @@ void main() {
 
     group('toJson', () {
       test('should convert ClockTime to JSON', () {
-        final time = ClockTime(14,
-            minute: 30, second: 45, millisecond: 123, microsecond: 456);
+        final time = ClockTime(
+          14,
+          minute: 30,
+          second: 45,
+          millisecond: 123,
+          microsecond: 456,
+        );
         final json = time.toJson();
 
         expect(json['hour'], equals(14));
@@ -292,8 +297,13 @@ void main() {
 
     group('toDuration', () {
       test('should convert ClockTime to Duration', () {
-        final time = ClockTime(14,
-            minute: 30, second: 45, millisecond: 123, microsecond: 456);
+        final time = ClockTime(
+          14,
+          minute: 30,
+          second: 45,
+          millisecond: 123,
+          microsecond: 456,
+        );
         final duration = time.toDuration();
 
         expect(duration.inHours, equals(14));
@@ -517,8 +527,10 @@ void main() {
 
       test('secondsSinceMidnight should work correctly', () {
         expect(ClockTime(0).secondsSinceMidnight, equals(0));
-        expect(ClockTime(0, minute: 1, second: 30).secondsSinceMidnight,
-            equals(90));
+        expect(
+          ClockTime(0, minute: 1, second: 30).secondsSinceMidnight,
+          equals(90),
+        );
         expect(ClockTime(1).secondsSinceMidnight, equals(3600));
       });
 
@@ -548,8 +560,13 @@ void main() {
 
     group('toString', () {
       test('should format toString correctly', () {
-        final time = ClockTime(14,
-            minute: 30, second: 45, millisecond: 123, microsecond: 456);
+        final time = ClockTime(
+          14,
+          minute: 30,
+          second: 45,
+          millisecond: 123,
+          microsecond: 456,
+        );
         final result = time.toString();
 
         expect(result, contains('14'));

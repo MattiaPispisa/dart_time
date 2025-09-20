@@ -3,6 +3,23 @@ import 'package:dart_time/dart_time.dart';
 /// [DateTimeHelper] contains the helper methods for [DateTime].
 extension DateTimeHelper on DateTime {
   /// create a new [DateTime] instance with named parameters.
+  ///
+  /// Example:
+  /// ```dart
+  /// // Create a complete date-time
+  /// final dateTime = DateTimeHelper.named(
+  ///   year: 2023,
+  ///   month: 6,
+  ///   day: 15,
+  ///   hour: 14,
+  ///   minute: 30,
+  ///   second: 45,
+  /// ); // 2023-06-15 14:30:45.000
+  ///
+  /// // Create with only year (others default to 1/0)
+  /// final newYear = DateTimeHelper.named(year: 2023);
+  /// // 2023-01-01 00:00:00.000
+  /// ```
   static DateTime named({
     required int year,
     int? month,
@@ -26,6 +43,19 @@ extension DateTimeHelper on DateTime {
   }
 
   /// copy with new values
+  ///
+  /// Example:
+  /// ```dart
+  /// final original = DateTime(2023, 6, 15, 14, 30);
+  ///
+  /// // Change year and month, keep everything else
+  /// final updated = original.copyWith(year: 2024, month: 7);
+  /// // 2024-07-15 14:30:00.000
+  ///
+  /// // Copy with no changes
+  /// final identical = original.copyWith();
+  /// // Same as original
+  /// ```
   DateTime copyWith({
     int? year,
     int? month,
@@ -48,6 +78,15 @@ extension DateTimeHelper on DateTime {
       );
 
   /// copy with new [time]
+  ///
+  /// Example:
+  /// ```dart
+  /// final original = DateTime(2023, 6, 15, 14, 30, 45);
+  /// final newTime = ClockTime(10, minute: 20, second: 30);
+  ///
+  /// final updated = original.copyTime(newTime);
+  /// // 2023-06-15 10:20:30.000 (date preserved, time changed)
+  /// ```
   DateTime copyTime(ClockTime time) {
     return copyWith(
       hour: time.hour,
@@ -59,6 +98,13 @@ extension DateTimeHelper on DateTime {
   }
 
   /// get the start of the year
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2023, 6, 15, 14, 30, 45);
+  /// final startYear = date.startOfYear;
+  /// // 2023-01-01 00:00:00.000
+  /// ```
   DateTime get startOfYear => copyWith(
         month: 1,
         day: 1,
@@ -70,6 +116,13 @@ extension DateTimeHelper on DateTime {
       );
 
   /// get the start of the month
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2023, 6, 15, 14, 30, 45);
+  /// final startMonth = date.startOfMonth;
+  /// // 2023-06-01 00:00:00.000
+  /// ```
   DateTime get startOfMonth => copyWith(
         day: 1,
         hour: 0,
@@ -80,6 +133,13 @@ extension DateTimeHelper on DateTime {
       );
 
   /// get the start of the day
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2023, 6, 15, 14, 30, 45);
+  /// final startDay = date.startOfDay;
+  /// // 2023-06-15 00:00:00.000
+  /// ```
   DateTime get startOfDay => copyWith(
         hour: 0,
         minute: 0,
@@ -116,11 +176,28 @@ extension DateTimeHelper on DateTime {
         hour: 23,
         minute: 59,
         second: 59,
+        millisecond: 999,
+        microsecond: 999,
       );
 
   /// get the end of the month
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2023, 6, 15);
+  /// final endMonth = date.endOfMonth;
+  /// // 2023-06-30 23:59:59.999
+  ///
+  /// // Works correctly for different month lengths
+  /// final feb = DateTime(2023, 2, 15).endOfMonth;
+  /// // 2023-02-28 23:59:59.999 (non-leap year)
+  ///
+  /// final febLeap = DateTime(2024, 2, 15).endOfMonth;
+  /// // 2024-02-29 23:59:59.999 (leap year)
+  /// ```
   DateTime get endOfMonth {
-    // Get the first day of the next month, then subtract 1 day to get the last day of current month
+    // Get the first day of the next month,
+    // then subtract 1 day to get the last day of current month
     final nextMonth = month == 12
         ? DateTimeHelper.named(year: year + 1, month: 1, day: 1)
         : DateTimeHelper.named(year: year, month: month + 1, day: 1);
@@ -140,22 +217,29 @@ extension DateTimeHelper on DateTime {
         hour: 23,
         minute: 59,
         second: 59,
+        millisecond: 999,
+        microsecond: 999,
       );
 
   /// get the end of the hour
   DateTime get endOfHour => copyWith(
         minute: 59,
         second: 59,
+        millisecond: 999,
+        microsecond: 999,
       );
 
   /// get the end of the minute
   DateTime get endOfMinute => copyWith(
         second: 59,
+        millisecond: 999,
+        microsecond: 999,
       );
 
   /// get the end of the second
   DateTime get endOfSecond => copyWith(
         millisecond: 999,
+        microsecond: 999,
       );
 
   /// get the next day
@@ -223,6 +307,43 @@ extension DateTimeHelper on DateTime {
     final otherWeekStart = other._getWeekStart(firstDayOfWeek);
     return thisWeekStart.isSameDay(otherWeekStart);
   }
+
+  /// check if `this` is in the future.
+  ///
+  /// This function internally use [DateTime.now] hence impure.
+  bool get isFuture => isAfter(DateTime.now());
+
+  /// check if `this` is in the past
+  ///
+  /// This function internally use [DateTime.now] hence impure.
+  bool get isPast => isBefore(DateTime.now());
+
+  /// check if `this` is a Monday
+  bool get isMonday => weekday == DateTime.monday;
+
+  /// check if `this` is a Tuesday
+  bool get isTuesday => weekday == DateTime.tuesday;
+
+  /// check if `this` is a Wednesday
+  bool get isWednesday => weekday == DateTime.wednesday;
+
+  /// check if `this` is a Thursday
+  bool get isThursday => weekday == DateTime.thursday;
+
+  /// check if `this` is a Friday
+  bool get isFriday => weekday == DateTime.friday;
+
+  /// check if `this` is a Saturday
+  bool get isSaturday => weekday == DateTime.saturday;
+
+  /// check if `this` is a Sunday
+  bool get isSunday => weekday == DateTime.sunday;
+
+  /// check if `this` is a weekend (Saturday or Sunday)
+  bool get isWeekend => isSaturday || isSunday;
+
+  /// check if `this` is a weekday (Monday to Friday)
+  bool get isWeekday => !isWeekend;
 
   /// Get the week number of the year according to ISO 8601 standard.
   ///
@@ -355,7 +476,8 @@ extension DateTimeHelper on DateTime {
 
   /// Get the number of days in this month
   ///
-  /// Returns the correct number of days for each month, accounting for leap years.
+  /// Returns the correct number of days for each month,
+  /// accounting for leap years.
   ///
   /// Example:
   /// ```dart
@@ -365,9 +487,10 @@ extension DateTimeHelper on DateTime {
   /// DateTime(2023, 1, 15).daysInMonth; // 31 (January)
   /// ```
   int get daysInMonth {
-    // Get the first day of the next month, then subtract to get last day of current month
+    // Get the first day of the next month,
+    // then subtract to get last day of current month
     final nextMonth =
-        month == 12 ? DateTime(year + 1, 1, 1) : DateTime(year, month + 1, 1);
+        month == 12 ? DateTime(year + 1) : DateTime(year, month + 1);
     final lastDayOfMonth = nextMonth.subtract(const Duration(days: 1));
     return lastDayOfMonth.day;
   }
@@ -379,7 +502,17 @@ extension DateTimeHelper on DateTime {
   ///
   /// Example:
   /// ```dart
-  /// // TODO(mattia): add examples
+  /// final date1 = DateTime(2023, 6, 15, 14, 30);
+  /// final date2 = DateTime(2023, 6, 15, 10, 15);
+  /// final date3 = DateTime(2023, 6, 16, 8, 0);
+  ///
+  /// // Same day, later time
+  /// date1.isSameOrAfter(date2, TimeGranularity.day);  // true (same day)
+  /// date1.isSameOrAfter(date2, TimeGranularity.hour); // true (later hour)
+  ///
+  /// // Different day
+  /// date3.isSameOrAfter(date1, TimeGranularity.day);  // true (next day)
+  /// date1.isSameOrAfter(date3, TimeGranularity.day);  // false (previous day)
   /// ```
   bool isSameOrAfter(
     DateTime other, [
@@ -397,7 +530,17 @@ extension DateTimeHelper on DateTime {
   ///
   /// Example:
   /// ```dart
-  /// // TODO(mattia): add examples
+  /// final morning = DateTime(2023, 6, 15, 10, 30);
+  /// final afternoon = DateTime(2023, 6, 15, 14, 45);
+  /// final nextDay = DateTime(2023, 6, 16, 9, 0);
+  ///
+  /// // Hour-level comparison
+  /// afternoon.isGranularAfter(morning, TimeGranularity.hour);  // true
+  /// morning.isGranularAfter(afternoon, TimeGranularity.hour);  // false
+  ///
+  /// // Day-level comparison (same day = not after)
+  /// afternoon.isGranularAfter(morning, TimeGranularity.day);   // false
+  /// nextDay.isGranularAfter(morning, TimeGranularity.day);     // true
   /// ```
   bool isGranularAfter(
     DateTime other, [
@@ -412,7 +555,17 @@ extension DateTimeHelper on DateTime {
   ///
   /// Example:
   /// ```dart
-  /// // TODO(mattia): add examples
+  /// final morning = DateTime(2023, 6, 15, 10, 30);
+  /// final afternoon = DateTime(2023, 6, 15, 14, 45);
+  /// final yesterday = DateTime(2023, 6, 14, 16, 0);
+  ///
+  /// // Hour-level comparison
+  /// morning.isGranularBefore(afternoon, TimeGranularity.hour);  // true
+  /// afternoon.isGranularBefore(morning, TimeGranularity.hour);  // false
+  ///
+  /// // Day-level comparison (same day = not before)
+  /// morning.isGranularBefore(afternoon, TimeGranularity.day);   // false
+  /// yesterday.isGranularBefore(morning, TimeGranularity.day);   // true
   /// ```
   bool isGranularBefore(
     DateTime other, [
@@ -427,7 +580,17 @@ extension DateTimeHelper on DateTime {
   ///
   /// Example:
   /// ```dart
-  /// // TODO(mattia): add examples
+  /// final date1 = DateTime(2023, 6, 15, 14, 30);
+  /// final date2 = DateTime(2023, 6, 15, 10, 15);
+  /// final date3 = DateTime(2023, 6, 14, 20, 0);
+  ///
+  /// // Same day, earlier time
+  /// date1.isSameOrBefore(date2, TimeGranularity.day);  // true (same day)
+  /// date2.isSameOrBefore(date1, TimeGranularity.hour); // true (earlier hour)
+  ///
+  /// // Different day
+  /// date1.isSameOrBefore(date3, TimeGranularity.day);  // true (previous day)
+  /// date3.isSameOrBefore(date1, TimeGranularity.day);  // false (next day)
   /// ```
   bool isSameOrBefore(
     DateTime other, [
@@ -460,6 +623,17 @@ extension DateTimeHelper on DateTime {
   DateTime addYears(int amount) => copyWith(year: year + amount);
 
   /// add [amount] months to `this`
+  ///
+  /// Example:
+  /// ```dart
+  /// final date = DateTime(2023, 6, 15);
+  ///
+  /// final future = date.addMonths(2);
+  /// // 2023-08-15
+  ///
+  /// final past = date.addMonths(-3);
+  /// // 2023-03-15
+  /// ```
   DateTime addMonths(int amount) => copyWith(month: month + amount);
 
   /// Add [amount] days to `this` DateTime.
@@ -734,7 +908,7 @@ extension _GranularityExt on TimeGranularity {
       milliseconds: () => time.copyWith(
         microsecond: 0,
       ),
-      microseconds: () => time, 
+      microseconds: () => time,
     );
   }
 }

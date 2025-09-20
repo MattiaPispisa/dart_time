@@ -321,17 +321,18 @@ void main() {
         }
 
         expect(
-            results,
-            equals([
-              'year',
-              'month',
-              'day',
-              'hour',
-              'minute',
-              'second',
-              'milliseconds',
-              'microseconds',
-            ]));
+          results,
+          equals([
+            'year',
+            'month',
+            'day',
+            'hour',
+            'minute',
+            'second',
+            'milliseconds',
+            'microseconds',
+          ]),
+        );
       });
 
       test('should maintain correct enum ordering', () {

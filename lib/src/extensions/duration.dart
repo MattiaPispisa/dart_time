@@ -15,6 +15,18 @@ extension DurationHelper on Duration {
   ///
   /// if [isoString] does not follow correct format,
   /// an [ArgumentError] is thrown.
+  ///
+  /// Example:
+  /// ```dart
+  /// final duration1 = DurationHelper.parseISO('P3DT4H30M');
+  /// // Duration(days: 3, hours: 4, minutes: 30)
+  ///
+  /// final duration2 = DurationHelper.parseISO('P2W');
+  /// // Duration(days: 14)  // 2 weeks = 14 days
+  ///
+  /// final duration3 = DurationHelper.parseISO('PT1H30M45S');
+  /// // Duration(hours: 1, minutes: 30, seconds: 45)
+  /// ```
   static Duration parseISO(String isoString) {
     final isoDuration = ISODuration.parse(isoString);
 
@@ -27,6 +39,13 @@ extension DurationHelper on Duration {
   }
 
   /// convert [Duration] to [ISODuration]
+  ///
+  /// Example:
+  /// ```dart
+  /// final duration = Duration(days: 3, hours: 4, minutes: 30);
+  /// final isoDuration = duration.toIsoDuration();
+  /// // ISODuration(days: 3, hours: 4, minutes: 30, seconds: 0)
+  /// ```
   ISODuration toIsoDuration() {
     return ISODuration(
       days: inDays,
@@ -39,17 +58,48 @@ extension DurationHelper on Duration {
   /// convert [Duration] to ISO 8601 string format
   ///
   /// returns a string following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+  ///
+  /// Example:
+  /// ```dart
+  /// final duration = Duration(days: 3, hours: 4, minutes: 30);
+  /// final isoString = duration.toIsoString();
+  /// // "P3DT4H30M"
+  ///
+  /// final simple = Duration(hours: 2);
+  /// print(simple.toIsoString()); // "PT2H"
+  /// ```
   String toIsoString() {
     return toIsoDuration().toIso();
   }
 
   /// Check if duration is zero
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration.zero.isZero;              // true
+  /// Duration(seconds: 0).isZero;       // true
+  /// Duration(minutes: 1).isZero;       // false
+  /// ```
   bool get isZero => inMicroseconds == 0;
 
   /// Check if duration is positive
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: 5).isPositive;   // true
+  /// Duration.zero.isPositive;          // false
+  /// Duration(minutes: -5).isPositive;  // false
+  /// ```
   bool get isPositive => inMicroseconds > 0;
 
   /// Check if duration is negative
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: -5).isNegative;  // true
+  /// Duration(minutes: 5).isNegative;   // false
+  /// Duration.zero.isNegative;          // false
+  /// ```
   bool get isNegative => inMicroseconds < 0;
 
   /// Get absolute value of duration
@@ -144,15 +194,39 @@ extension DurationHelper on Duration {
   Duration roundToDay() => Duration(days: (inHours / 24).round());
 
   /// Check if this duration is longer than other
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: 10).isLongerThan(Duration(minutes: 5));  // true
+  /// Duration(minutes: 3).isLongerThan(Duration(minutes: 5));   // false
+  /// ```
   bool isLongerThan(Duration other) => this > other;
 
   /// Check if this duration is shorter than other
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: 3).isShorterThan(Duration(minutes: 5));  // true
+  /// Duration(minutes: 10).isShorterThan(Duration(minutes: 5)); // false
+  /// ```
   bool isShorterThan(Duration other) => this < other;
 
   /// Get the maximum between this and other duration
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: 10).max(Duration(minutes: 5));   // Duration(minutes: 10)
+  /// Duration(minutes: 3).max(Duration(minutes: 5));    // Duration(minutes: 5)
+  /// ```
   Duration max(Duration other) => this > other ? this : other;
 
   /// Get the minimum between this and other duration
+  ///
+  /// Example:
+  /// ```dart
+  /// Duration(minutes: 10).min(Duration(minutes: 5));   // Duration(minutes: 5)
+  /// Duration(minutes: 3).min(Duration(minutes: 5));    // Duration(minutes: 3)
+  /// ```
   Duration min(Duration other) => this < other ? this : other;
 }
 
@@ -160,21 +234,57 @@ extension DurationHelper on Duration {
 /// convert [int] to [Duration].
 extension IntDurationHelper on int {
   /// get the [Duration] of [days]
+  ///
+  /// Example:
+  /// ```dart
+  /// 5.days;   // Duration(days: 5)
+  /// 1.days;   // Duration(days: 1)
+  /// ```
   Duration get days => Duration(days: this);
 
   /// get the [Duration] of [hours]
+  ///
+  /// Example:
+  /// ```dart
+  /// 3.hours;  // Duration(hours: 3)
+  /// 24.hours; // Duration(hours: 24)
+  /// ```
   Duration get hours => Duration(hours: this);
 
   /// get the [Duration] of [minutes]
+  ///
+  /// Example:
+  /// ```dart
+  /// 30.minutes;  // Duration(minutes: 30)
+  /// 90.minutes;  // Duration(minutes: 90)
+  /// ```
   Duration get minutes => Duration(minutes: this);
 
   /// get the [Duration] of [seconds]
+  ///
+  /// Example:
+  /// ```dart
+  /// 45.seconds;  // Duration(seconds: 45)
+  /// 120.seconds; // Duration(seconds: 120)
+  /// ```
   Duration get seconds => Duration(seconds: this);
 
   /// get the [Duration] of [milliseconds]
+  ///
+  /// Example:
+  /// ```dart
+  /// 500.milliseconds;   // Duration(milliseconds: 500)
+  /// 1500.milliseconds;  // Duration(milliseconds: 1500)
+  /// ```
   Duration get milliseconds => Duration(milliseconds: this);
 
   /// get the [Duration] of [microseconds]
+  ///
+  /// Example:
+  /// ```dart
+  /// 1000.microseconds;  // Duration(microseconds: 1000)
+  /// 500.microseconds;   // Duration(microseconds: 500)
+  /// ```
   Duration get microseconds => Duration(microseconds: this);
 
   /// get the [Duration] of [weeks]
@@ -187,9 +297,9 @@ extension IntDurationHelper on int {
   Duration get weeks => Duration(days: this * 7);
 }
 
-/// [DoubleDurationHelper] contains helper methods for
+/// [NumDurationHelper] contains helper methods for
 /// convert [double] to [Duration] for fractional values.
-extension DoubleDurationHelper on double {
+extension NumDurationHelper on num {
   /// get the [Duration] of fractional `hours`
   ///
   /// Example:

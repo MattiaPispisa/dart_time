@@ -5,9 +5,17 @@ final _kRegExpIsoDuration = RegExp(
 );
 
 /// [ISODuration] is the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) duration.
+///
+/// Supports both positive and negative durations according
+/// to ISO 8601 standard.
+///
+/// Negative durations are prefixed with a minus sign (-).
 @immutable
 class ISODuration {
   /// Creates a new [ISODuration] instance.
+  ///
+  /// All components can be negative. If any component is negative,
+  /// the entire duration is considered negative.
   factory ISODuration({
     int? years,
     int? months,
@@ -30,20 +38,30 @@ class ISODuration {
 
   /// parse [isoString] following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
   ///
+  /// Supports negative durations prefixed with '-' (e.g., '-P1Y2M3D').
   /// if [isoString] does not follow correct format,
   /// an [ArgumentError] is thrown.
   factory ISODuration.parse(String isoString) {
     _validateIsoString(isoString);
 
+    // Check if duration is negative
+    final isNegative = isoString.startsWith('-');
+
+    // Remove the sign for parsing
+    final cleanIsoString =
+        isoString.startsWith('-') || isoString.startsWith('+')
+            ? isoString.substring(1)
+            : isoString;
+
     // split between period and time
-    final isoStringSplit = isoString.split('T');
+    final isoStringSplit = cleanIsoString.split('T');
 
     var isoPeriodString = '';
     var isoTimeString = '';
 
     // no "T" found, just period
     if (isoStringSplit.length == 1) {
-      isoPeriodString = isoString;
+      isoPeriodString = cleanIsoString;
     }
     // period and time
     else {
@@ -67,6 +85,17 @@ class ISODuration {
     minutes = _parseTime(isoTimeString, 'M');
     seconds = _parseTime(isoTimeString, 'S');
 
+    // Apply negative sign to all components if duration is negative
+    if (isNegative) {
+      year = -year;
+      month = -month;
+      weeks = -weeks;
+      days = -days;
+      hours = -hours;
+      minutes = -minutes;
+      seconds = -seconds;
+    }
+
     return ISODuration(
       years: year,
       months: month,
@@ -79,6 +108,21 @@ class ISODuration {
   }
 
   /// parse [json] to [ISODuration]
+  ///
+  /// Example:
+  /// ```dart
+  /// final json = {
+  ///   'years': 1,
+  ///   'months': 6,
+  ///   'days': 15,
+  ///   'hours': 4,
+  ///   'minutes': 30,
+  ///   'seconds': 0,
+  ///   'weeks': 0,
+  /// };
+  /// final duration = ISODuration.fromJson(json);
+  /// // ISODuration(years: 1, months: 6, days: 15, hours: 4, minutes: 30)
+  /// ```
   factory ISODuration.fromJson(Map<String, dynamic> json) {
     return ISODuration(
       years: json['years'] as int,
@@ -133,6 +177,38 @@ class ISODuration {
   /// seconds
   final int seconds;
 
+  /// Returns true if this duration is negative.
+  /// A duration is considered negative if any of its components is negative.
+  bool get isNegative =>
+      years < 0 ||
+      months < 0 ||
+      weeks < 0 ||
+      days < 0 ||
+      hours < 0 ||
+      minutes < 0 ||
+      seconds < 0;
+
+  /// Returns true if this duration is positive.
+  /// A duration is considered positive if any of its components is positive.
+  bool get isPositive =>
+      years > 0 ||
+      months > 0 ||
+      weeks > 0 ||
+      days > 0 ||
+      hours > 0 ||
+      minutes > 0 ||
+      seconds > 0;
+
+  /// Returns true if this duration is zero (all components are zero).
+  bool get isZero =>
+      years == 0 &&
+      months == 0 &&
+      weeks == 0 &&
+      days == 0 &&
+      hours == 0 &&
+      minutes == 0 &&
+      seconds == 0;
+
   @override
   bool operator ==(Object other) =>
       other is ISODuration &&
@@ -164,43 +240,60 @@ class ISODuration {
   /// convert [ISODuration] to ISO 8601 string format
   ///
   /// returns a string following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+  /// Negative durations are prefixed with '-'.
   String toIso() {
-    final buffer = StringBuffer('P');
+    final buffer = StringBuffer();
 
-    if (years > 0) {
-      buffer.write('${years}Y');
+    // Add negative sign if needed
+    if (isNegative) {
+      buffer.write('-');
     }
 
-    if (months > 0) {
-      buffer.write('${months}M');
+    buffer.write('P');
+
+    // Use absolute values for output since sign is handled at the beginning
+    final absYears = years.abs();
+    final absMonths = months.abs();
+    final absWeeks = weeks.abs();
+    final absDays = days.abs();
+    final absHours = hours.abs();
+    final absMinutes = minutes.abs();
+    final absSeconds = seconds.abs();
+
+    if (absYears > 0) {
+      buffer.write('${absYears}Y');
     }
 
-    if (weeks > 0) {
-      buffer.write('${weeks}W');
+    if (absMonths > 0) {
+      buffer.write('${absMonths}M');
     }
 
-    if (days > 0) {
-      buffer.write('${days}D');
+    if (absWeeks > 0) {
+      buffer.write('${absWeeks}W');
     }
 
-    if (hours > 0 || minutes > 0 || seconds > 0) {
+    if (absDays > 0) {
+      buffer.write('${absDays}D');
+    }
+
+    if (absHours > 0 || absMinutes > 0 || absSeconds > 0) {
       buffer.write('T');
 
-      if (hours > 0) {
-        buffer.write('${hours}H');
+      if (absHours > 0) {
+        buffer.write('${absHours}H');
       }
 
-      if (minutes > 0) {
-        buffer.write('${minutes}M');
+      if (absMinutes > 0) {
+        buffer.write('${absMinutes}M');
       }
 
-      if (seconds > 0) {
-        buffer.write('${seconds}S');
+      if (absSeconds > 0) {
+        buffer.write('${absSeconds}S');
       }
     }
 
-    // if no components were added, return P0D
-    if (buffer.length == 1) {
+    // if no components were added, return P0D (or -P0D for negative)
+    if (buffer.toString() == 'P' || buffer.toString() == '-P') {
       buffer.write('0D');
     }
 
@@ -208,6 +301,20 @@ class ISODuration {
   }
 
   /// convert [ISODuration] to [Duration]
+  ///
+  /// Note: Years and months are ignored as they cannot be accurately
+  /// converted to a fixed duration without a specific date context.
+  ///
+  /// Example:
+  /// ```dart
+  /// final isoDuration = ISODuration(days: 3, hours: 4, minutes: 30);
+  /// final duration = isoDuration.toDuration();
+  /// // Duration(days: 3, hours: 4, minutes: 30)
+  ///
+  /// final withWeeks = ISODuration(weeks: 2, days: 1);
+  /// final duration2 = withWeeks.toDuration();
+  /// // Duration(days: 15)  // 2 weeks + 1 day = 15 days
+  /// ```
   Duration toDuration() {
     return Duration(
       days: days + (weeks * 7),
@@ -218,6 +325,17 @@ class ISODuration {
   }
 
   /// copy with new values
+  ///
+  /// Example:
+  /// ```dart
+  /// final original = ISODuration(years: 1, months: 2, days: 3);
+  ///
+  /// final modified = original.copyWith(years: 2, days: 5);
+  /// // ISODuration(years: 2, months: 2, days: 5)
+  ///
+  /// final onlyMonths = original.copyWith(years: 0, days: 0);
+  /// // ISODuration(years: 0, months: 2, days: 0)
+  /// ```
   ISODuration copyWith({
     int? years,
     int? months,
