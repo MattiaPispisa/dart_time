@@ -297,9 +297,9 @@ extension IntDurationHelper on int {
   Duration get weeks => Duration(days: this * 7);
 }
 
-/// [DoubleDurationHelper] contains helper methods for
+/// [NumDurationHelper] contains helper methods for
 /// convert [double] to [Duration] for fractional values.
-extension DoubleDurationHelper on double {
+extension NumDurationHelper on num {
   /// get the [Duration] of fractional `hours`
   ///
   /// Example:

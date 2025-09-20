@@ -11,39 +11,39 @@
 
 - [Dart Time](#dart-time)
   - [What's Included](#whats-included)
-    - [🔧 **Extensions**](#-extensions)
-    - [📅 **Specialized Classes**](#-specialized-classes)
-    - [✨ **Key Features**](#-key-features)
+    - [**Extensions**](#extensions)
+    - [**Specialized Classes**](#specialized-classes)
+    - [**Key Features**](#key-features)
   - [Installation](#installation)
   - [Usage](#usage)
   - [API Quick Reference](#api-quick-reference)
-    - [🔧 Extensions](#-extensions-1)
+    - [**Extensions**](#extensions-1)
       - [`DateTimeHelper` - Enhanced DateTime](#datetimehelper---enhanced-datetime)
       - [`IterableDateTimeHelper` - Enhanced Iterable](#iterabledatetimehelper---enhanced-iterable)
       - [`DurationHelper` - Enhanced Duration](#durationhelper---enhanced-duration)
       - [`IntDurationHelper` \& `DoubleDurationHelper`](#intdurationhelper--doubledurationhelper)
-    - [📅 Classes](#-classes)
+    - [**Classes**](#classes)
       - [`ClockTime` - Time without Date](#clocktime---time-without-date)
       - [`ClockTimeRange` - Time Ranges](#clocktimerange---time-ranges)
       - [`DartDateRange` - Date Ranges](#dartdaterange---date-ranges)
       - [`ISODuration` - ISO 8601 Durations](#isoduration---iso-8601-durations)
-    - [🎯 TimeGranularity Enum](#-timegranularity-enum)
+    - [TimeGranularity Enum](#timegranularity-enum)
 
 
 A comprehensive Dart library that extends and enhances Dart's built-in time functionality. This library provides powerful extensions to `DateTime` and `Duration`, plus specialized classes for advanced time operations.
 
 ## What's Included
 
-### 🔧 **Extensions**
+### **Extensions**
 Enhance existing Dart types with additional functionality:
 
 - **`DateTimeHelper`** - Extends `DateTime` with 50+ methods for date manipulation, boundary calculations, granular comparisons, and DST-aware arithmetic
 - **`DurationHelper`** - Extends `Duration` with formatting, validation, rounding, and ISO 8601 conversion
 - **`IntDurationHelper`** - Extends `int` to create durations easily (e.g., `5.days`, `30.minutes`)
-- **`DoubleDurationHelper`** - Extends `double` for fractional durations (e.g., `2.5.fractionalHours`)
-- **`IterableDateTimeHelper`** - Extends `Iterable<DateTime>` with helper methods for date manipulation
+- **`NumDurationHelper`** - Extends `num` for fractional durations (e.g., `2.5.fractionalHours`)
+- **`IterableDateTimeHelper`** - Extends `Iterable<DateTime>` with helper methods for dates manipulation
 
-### 📅 **Specialized Classes**
+### **Specialized Classes**
 New types for specific time-related operations:
 
 - **`ClockTime`** - Represents time-of-day (14:30:45) without date information, with 12/24-hour formatting and time-period detection
@@ -51,7 +51,7 @@ New types for specific time-related operations:
 - **`DartDateRange`** - Powerful date range operations with iteration, overlap detection, and boundary calculations
 - **`ISODuration`** - Full ISO 8601 duration support with positive/negative durations and component-based operations
 
-### ✨ **Key Features**
+### **Key Features**
 
 - **DST-Aware Operations**: Handle Daylight Saving Time transitions correctly
 - **Granular Time Comparisons**: Compare dates/times at different precision levels (year, month, day, hour, etc.)
@@ -62,7 +62,7 @@ New types for specific time-related operations:
 
 ## Installation
 
-**❗ In order to start using Dart Time you must have the [Dart SDK][dart_install_link] installed on your machine.**
+**❗ In order to start using Dart Time you must have the [Dart SDK][dart_install_link] installed on your machine (minimum Dart SDK version: `2.14.0` (09/2021))**
 
 Install via `dart pub add`:
 
@@ -132,9 +132,9 @@ void main() {
 
 ## API Quick Reference
 
-> 💡 **Tip**: For complete API documentation with all methods and parameters, see the [full documentation](#) or use your IDE's intellisense.
+> 💡 **Tip**: For complete API documentation with all methods and parameters, see the [full documentation](https://pub.dev/documentation/dart_time/latest/).
 
-### 🔧 Extensions
+### **Extensions**
 
 #### `DateTimeHelper` - Enhanced DateTime
 Extends `DateTime` with 50+ additional methods:
@@ -196,7 +196,7 @@ Easy duration creation from numbers:
 2.5.fractionalHours    // 2 hours 30 minutes
 ```
 
-### 📅 Classes
+### **Classes**
 
 #### `ClockTime` - Time without Date
 Represents time-of-day independently from dates:
@@ -243,7 +243,7 @@ duration.toIso()                     // Convert back to string
 duration.isNegative                  // Check if negative
 ```
 
-### 🎯 TimeGranularity Enum
+### TimeGranularity Enum
 Control precision for comparisons:
 ```dart
 TimeGranularity.year      // Compare by year only
