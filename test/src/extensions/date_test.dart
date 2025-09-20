@@ -1141,7 +1141,8 @@ void main() {
       });
 
       test('all weekday methods should work with different times', () {
-        // Test with different times on the same days to ensure time doesn't affect weekday
+        // Test with different times on the same days
+        // to ensure time doesn't affect weekday
         final mondayMorning = DateTime(2023, 6, 12, 8, 30);
         final mondayEvening = DateTime(2023, 6, 12, 22, 45);
 
@@ -1150,7 +1151,7 @@ void main() {
         expect(mondayMorning.isWeekday, isTrue);
         expect(mondayEvening.isWeekday, isTrue);
 
-        final saturdayMorning = DateTime(2023, 6, 17, 9, 0);
+        final saturdayMorning = DateTime(2023, 6, 17, 9);
         final saturdayEvening = DateTime(2023, 6, 17, 23, 59);
 
         expect(saturdayMorning.isSaturday, isTrue);

@@ -103,7 +103,7 @@ class ClockTime {
   }
 
   /// Create ClockTime for now (current time)
-  /// 
+  ///
   /// This function internally use [DateTime.now] hence impure.
   factory ClockTime.now() {
     final now = DateTime.now();

@@ -114,7 +114,7 @@ void main() {
       });
 
       test('should work with dates spanning multiple years', () {
-        final oldDate = DateTime(1990, 1, 1);
+        final oldDate = DateTime(1990);
         final futureDate = DateTime(2050, 12, 31);
         final dates = [date1, oldDate, futureDate, date2];
 
