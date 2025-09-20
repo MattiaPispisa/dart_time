@@ -619,6 +619,22 @@ void main() {
     });
 
     group('comparison operators', () {
+      test('isFuture should work correctly', () {
+        final future = DateTime.now().addDays(1);
+        final past = DateTime.now().subDays(2);
+
+        expect(future.isFuture, isTrue);
+        expect(past.isFuture, isFalse);
+      });
+
+      test('isPast should work correctly', () {
+        final future = DateTime.now().addDays(1);
+        final past = DateTime.now().subDays(2);
+
+        expect(future.isPast, isFalse);
+        expect(past.isPast, isTrue);
+      });
+
       test('isSameOrAfter should work correctly', () {
         final earlier = DateTime(2023, 6, 14);
         final same = DateTime(2023, 6, 15, 14, 30, 45, 123, 456);
@@ -1034,6 +1050,113 @@ void main() {
         expect(clockTime.second, equals(45));
         expect(clockTime.millisecond, equals(123));
         expect(clockTime.microsecond, equals(456));
+      });
+    });
+
+    group('weekday methods', () {
+      test('isMonday should work correctly', () {
+        final monday = DateTime(2023, 6, 12); // Monday
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+
+        expect(monday.isMonday, isTrue);
+        expect(tuesday.isMonday, isFalse);
+      });
+
+      test('isTuesday should work correctly', () {
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+
+        expect(tuesday.isTuesday, isTrue);
+        expect(wednesday.isTuesday, isFalse);
+      });
+
+      test('isWednesday should work correctly', () {
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+        final thursday = DateTime(2023, 6, 15); // Thursday
+
+        expect(wednesday.isWednesday, isTrue);
+        expect(thursday.isWednesday, isFalse);
+      });
+
+      test('isThursday should work correctly', () {
+        final thursday = DateTime(2023, 6, 15); // Thursday
+        final friday = DateTime(2023, 6, 16); // Friday
+
+        expect(thursday.isThursday, isTrue);
+        expect(friday.isThursday, isFalse);
+      });
+
+      test('isFriday should work correctly', () {
+        final friday = DateTime(2023, 6, 16); // Friday
+        final saturday = DateTime(2023, 6, 17); // Saturday
+
+        expect(friday.isFriday, isTrue);
+        expect(saturday.isFriday, isFalse);
+      });
+
+      test('isSaturday should work correctly', () {
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+
+        expect(saturday.isSaturday, isTrue);
+        expect(sunday.isSaturday, isFalse);
+      });
+
+      test('isSunday should work correctly', () {
+        final sunday = DateTime(2023, 6, 18); // Sunday
+        final monday = DateTime(2023, 6, 19); // Monday
+
+        expect(sunday.isSunday, isTrue);
+        expect(monday.isSunday, isFalse);
+      });
+
+      test('isWeekend should work correctly', () {
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+        final monday = DateTime(2023, 6, 19); // Monday
+        final friday = DateTime(2023, 6, 16); // Friday
+
+        expect(saturday.isWeekend, isTrue);
+        expect(sunday.isWeekend, isTrue);
+        expect(monday.isWeekend, isFalse);
+        expect(friday.isWeekend, isFalse);
+      });
+
+      test('isWeekday should work correctly', () {
+        final monday = DateTime(2023, 6, 12); // Monday
+        final tuesday = DateTime(2023, 6, 13); // Tuesday
+        final wednesday = DateTime(2023, 6, 14); // Wednesday
+        final thursday = DateTime(2023, 6, 15); // Thursday
+        final friday = DateTime(2023, 6, 16); // Friday
+        final saturday = DateTime(2023, 6, 17); // Saturday
+        final sunday = DateTime(2023, 6, 18); // Sunday
+
+        expect(monday.isWeekday, isTrue);
+        expect(tuesday.isWeekday, isTrue);
+        expect(wednesday.isWeekday, isTrue);
+        expect(thursday.isWeekday, isTrue);
+        expect(friday.isWeekday, isTrue);
+        expect(saturday.isWeekday, isFalse);
+        expect(sunday.isWeekday, isFalse);
+      });
+
+      test('all weekday methods should work with different times', () {
+        // Test with different times on the same days to ensure time doesn't affect weekday
+        final mondayMorning = DateTime(2023, 6, 12, 8, 30);
+        final mondayEvening = DateTime(2023, 6, 12, 22, 45);
+
+        expect(mondayMorning.isMonday, isTrue);
+        expect(mondayEvening.isMonday, isTrue);
+        expect(mondayMorning.isWeekday, isTrue);
+        expect(mondayEvening.isWeekday, isTrue);
+
+        final saturdayMorning = DateTime(2023, 6, 17, 9, 0);
+        final saturdayEvening = DateTime(2023, 6, 17, 23, 59);
+
+        expect(saturdayMorning.isSaturday, isTrue);
+        expect(saturdayEvening.isSaturday, isTrue);
+        expect(saturdayMorning.isWeekend, isTrue);
+        expect(saturdayEvening.isWeekend, isTrue);
       });
     });
   });

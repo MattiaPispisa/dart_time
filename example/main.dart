@@ -107,7 +107,7 @@ void main() {
   print('  Work hours: ${startWork.format24Hour} - ${endWork.format24Hour}');
 
   // Time period detection
-  print('  Meeting is in: ${_getTimePeriod(meetingTime)}');
+  print('  Meeting is in: ${meetingTime.format12Hour}');
   print('  Minutes since midnight: ${meetingTime.minutesSinceMidnight}');
   print('  Minutes until end of day: ${meetingTime.minutesUntilMidnight}');
 
@@ -235,74 +235,4 @@ void main() {
   print('  Appointments on target day: $todayAppointments');
 
   print('');
-
-  // ═══════════════════════════════════════════════════════════════
-  // 💼 Real-world use cases
-  // ═══════════════════════════════════════════════════════════════
-
-  print('💼 Real-world Examples:');
-
-  // Business hours validation
-  final businessHours = ClockTimeRange(
-    start: ClockTime(9),
-    end: ClockTime(18),
-  );
-
-  final customerCall = DateTime.now();
-  if (businessHours.includes(customerCall)) {
-    print('  ✅ Customer service available');
-  } else {
-    print('  ❌ Outside business hours');
-  }
-
-  // Project timeline management
-  final sprintStart = DateTime.now().startOfDay;
-  final sprintEnd = sprintStart.addDays(14).endOfDay;
-  final sprintRange = DartDateRange(start: sprintStart, end: sprintEnd);
-
-  print('  📋 Sprint: ${sprintRange.duration.inDays} days');
-  print(
-    '  🏃‍♂️ Sprint progress: ${DateTime.now().difference(sprintStart).inDays}/14 days',
-  );
-
-  // Meeting scheduling
-  final meetings = <ClockTime>[
-    ClockTime(9, minute: 30),
-    ClockTime(11),
-    ClockTime(14, minute: 30),
-    ClockTime(16),
-  ];
-
-  print("  📅 Today's meetings:");
-  for (final meeting in meetings) {
-    final period = _getTimePeriod(meeting);
-    print('    • ${meeting.format12Hour} ($period)');
-  }
-
-  // Age calculation with precision
-  final birthDate = DateTime(1990, 6, 15);
-  final age = DateTime.now().difference(birthDate);
-  final ageYears = age.inDays ~/ 365;
-  print('  🎂 Age: approximately $ageYears years (${age.inDays} days)');
-
-  // Deadline tracking
-  final deadline = DateTime.now().add(7.days).endOfDay;
-  final timeLeft = deadline.difference(DateTime.now());
-  print(
-    '  ⏰ Project deadline: ${timeLeft.inDays} days,'
-    ' ${timeLeft.inHours % 24} hours left',
-  );
-
-  print(
-    '\n✨ This showcases the power of dart_time'
-    ' for any time-related operations!',
-  );
-}
-
-/// Helper function to determine time period
-String _getTimePeriod(ClockTime time) {
-  if (time.isMorning) return 'Morning';
-  if (time.isAfternoon) return 'Afternoon';
-  if (time.isEvening) return 'Evening';
-  return 'Night';
 }

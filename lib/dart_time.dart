@@ -8,3 +8,4 @@ export 'src/classes/granularity.dart';
 export 'src/classes/iso_duration.dart';
 export 'src/extensions/date.dart';
 export 'src/extensions/duration.dart';
+export 'src/extensions/iterable_date.dart';

@@ -57,6 +57,8 @@ class DartDateRange {
 
   /// create a new [DartDateRange] instance for today
   /// (`startOfDay` to `endOfDay`)
+  /// 
+  /// This function internally use [DateTime.now] hence impure.
   ///
   /// Example:
   /// ```dart

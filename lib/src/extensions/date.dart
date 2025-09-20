@@ -308,6 +308,43 @@ extension DateTimeHelper on DateTime {
     return thisWeekStart.isSameDay(otherWeekStart);
   }
 
+  /// check if `this` is in the future.
+  ///
+  /// This function internally use [DateTime.now] hence impure.
+  bool get isFuture => isAfter(DateTime.now());
+
+  /// check if `this` is in the past
+  ///
+  /// This function internally use [DateTime.now] hence impure.
+  bool get isPast => isBefore(DateTime.now());
+
+  /// check if `this` is a Monday
+  bool get isMonday => weekday == DateTime.monday;
+
+  /// check if `this` is a Tuesday
+  bool get isTuesday => weekday == DateTime.tuesday;
+
+  /// check if `this` is a Wednesday
+  bool get isWednesday => weekday == DateTime.wednesday;
+
+  /// check if `this` is a Thursday
+  bool get isThursday => weekday == DateTime.thursday;
+
+  /// check if `this` is a Friday
+  bool get isFriday => weekday == DateTime.friday;
+
+  /// check if `this` is a Saturday
+  bool get isSaturday => weekday == DateTime.saturday;
+
+  /// check if `this` is a Sunday
+  bool get isSunday => weekday == DateTime.sunday;
+
+  /// check if `this` is a weekend (Saturday or Sunday)
+  bool get isWeekend => isSaturday || isSunday;
+
+  /// check if `this` is a weekday (Monday to Friday)
+  bool get isWeekday => !isWeekend;
+
   /// Get the week number of the year according to ISO 8601 standard.
   ///
   /// Returns a value between 1 and 53. Week 1 is the first week that contains

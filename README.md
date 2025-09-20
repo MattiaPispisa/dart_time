@@ -19,6 +19,7 @@
   - [API Quick Reference](#api-quick-reference)
     - [🔧 Extensions](#-extensions-1)
       - [`DateTimeHelper` - Enhanced DateTime](#datetimehelper---enhanced-datetime)
+      - [`IterableDateTimeHelper` - Enhanced Iterable](#iterabledatetimehelper---enhanced-iterable)
       - [`DurationHelper` - Enhanced Duration](#durationhelper---enhanced-duration)
       - [`IntDurationHelper` \& `DoubleDurationHelper`](#intdurationhelper--doubledurationhelper)
     - [📅 Classes](#-classes)
@@ -40,6 +41,7 @@ Enhance existing Dart types with additional functionality:
 - **`DurationHelper`** - Extends `Duration` with formatting, validation, rounding, and ISO 8601 conversion
 - **`IntDurationHelper`** - Extends `int` to create durations easily (e.g., `5.days`, `30.minutes`)
 - **`DoubleDurationHelper`** - Extends `double` for fractional durations (e.g., `2.5.fractionalHours`)
+- **`IterableDateTimeHelper`** - Extends `Iterable<DateTime>` with helper methods for date manipulation
 
 ### 📅 **Specialized Classes**
 New types for specific time-related operations:
@@ -159,6 +161,20 @@ date.subYears(1), date.addHours(3)
 ```dart
 date.isSameDay(other), date.isSameMonth(other)
 date.isGranularAfter(other, TimeGranularity.hour)
+```
+
+**Date Comparison**
+```dart
+date.isFuture, date.isPast
+date.isMonday, date.isTuesday, date.isWednesday, date.isThursday, date.isFriday, date.isSaturday, date.isSunday
+date.isWeekend, date.isWeekday
+```
+
+#### `IterableDateTimeHelper` - Enhanced Iterable<DateTime>
+Extends `Iterable<DateTime>` with helper methods for date manipulation:
+```dart
+dates.max();
+dates.min();
 ```
 
 #### `DurationHelper` - Enhanced Duration
