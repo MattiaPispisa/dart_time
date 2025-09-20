@@ -184,6 +184,8 @@ void main() {
         expect(result.hour, equals(23));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfMonth should work correctly', () {
@@ -205,6 +207,8 @@ void main() {
 
         // February non-leap year - 28 days
         expect(DateTime(2023, 2, 15).endOfMonth.day, equals(28));
+        expect(DateTime(2023, 2, 15).endOfMonth.millisecond, equals(999));
+        expect(DateTime(2023, 2, 15).endOfMonth.microsecond, equals(999));
 
         // February leap year - 29 days
         expect(DateTime(2020, 2, 15).endOfMonth.day, equals(29));
@@ -225,6 +229,8 @@ void main() {
         expect(result.hour, equals(23));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfHour should work correctly', () {
@@ -236,6 +242,8 @@ void main() {
         expect(result.hour, equals(14));
         expect(result.minute, equals(59));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfMinute should work correctly', () {
@@ -247,6 +255,8 @@ void main() {
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
         expect(result.second, equals(59));
+        expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
 
       test('endOfSecond should work correctly', () {
@@ -259,6 +269,7 @@ void main() {
         expect(result.minute, equals(30));
         expect(result.second, equals(45));
         expect(result.millisecond, equals(999));
+        expect(result.microsecond, equals(999));
       });
     });
 
@@ -269,6 +280,9 @@ void main() {
         expect(result.day, equals(16));
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(123));
+        expect(result.microsecond, equals(456));
       });
 
       test('previousDay should work correctly', () {
@@ -277,6 +291,9 @@ void main() {
         expect(result.day, equals(14));
         expect(result.hour, equals(14));
         expect(result.minute, equals(30));
+        expect(result.second, equals(45));
+        expect(result.millisecond, equals(123));
+        expect(result.microsecond, equals(456));
       });
     });
 

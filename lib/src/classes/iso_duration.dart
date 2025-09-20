@@ -5,13 +5,15 @@ final _kRegExpIsoDuration = RegExp(
 );
 
 /// [ISODuration] is the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) duration.
-/// 
-/// Supports both positive and negative durations according to ISO 8601 standard.
+///
+/// Supports both positive and negative durations according
+/// to ISO 8601 standard.
+///
 /// Negative durations are prefixed with a minus sign (-).
 @immutable
 class ISODuration {
   /// Creates a new [ISODuration] instance.
-  /// 
+  ///
   /// All components can be negative. If any component is negative,
   /// the entire duration is considered negative.
   factory ISODuration({
@@ -44,11 +46,12 @@ class ISODuration {
 
     // Check if duration is negative
     final isNegative = isoString.startsWith('-');
-    
+
     // Remove the sign for parsing
-    final cleanIsoString = isoString.startsWith('-') || isoString.startsWith('+') 
-        ? isoString.substring(1) 
-        : isoString;
+    final cleanIsoString =
+        isoString.startsWith('-') || isoString.startsWith('+')
+            ? isoString.substring(1)
+            : isoString;
 
     // split between period and time
     final isoStringSplit = cleanIsoString.split('T');
@@ -105,6 +108,21 @@ class ISODuration {
   }
 
   /// parse [json] to [ISODuration]
+  ///
+  /// Example:
+  /// ```dart
+  /// final json = {
+  ///   'years': 1,
+  ///   'months': 6,
+  ///   'days': 15,
+  ///   'hours': 4,
+  ///   'minutes': 30,
+  ///   'seconds': 0,
+  ///   'weeks': 0,
+  /// };
+  /// final duration = ISODuration.fromJson(json);
+  /// // ISODuration(years: 1, months: 6, days: 15, hours: 4, minutes: 30)
+  /// ```
   factory ISODuration.fromJson(Map<String, dynamic> json) {
     return ISODuration(
       years: json['years'] as int,
@@ -161,17 +179,35 @@ class ISODuration {
 
   /// Returns true if this duration is negative.
   /// A duration is considered negative if any of its components is negative.
-  bool get isNegative => years < 0 || months < 0 || weeks < 0 || days < 0 || 
-                         hours < 0 || minutes < 0 || seconds < 0;
+  bool get isNegative =>
+      years < 0 ||
+      months < 0 ||
+      weeks < 0 ||
+      days < 0 ||
+      hours < 0 ||
+      minutes < 0 ||
+      seconds < 0;
 
   /// Returns true if this duration is positive.
   /// A duration is considered positive if any of its components is positive.
-  bool get isPositive => years > 0 || months > 0 || weeks > 0 || days > 0 || 
-                         hours > 0 || minutes > 0 || seconds > 0;
+  bool get isPositive =>
+      years > 0 ||
+      months > 0 ||
+      weeks > 0 ||
+      days > 0 ||
+      hours > 0 ||
+      minutes > 0 ||
+      seconds > 0;
 
   /// Returns true if this duration is zero (all components are zero).
-  bool get isZero => years == 0 && months == 0 && weeks == 0 && days == 0 && 
-                     hours == 0 && minutes == 0 && seconds == 0;
+  bool get isZero =>
+      years == 0 &&
+      months == 0 &&
+      weeks == 0 &&
+      days == 0 &&
+      hours == 0 &&
+      minutes == 0 &&
+      seconds == 0;
 
   @override
   bool operator ==(Object other) =>
@@ -206,17 +242,13 @@ class ISODuration {
   /// returns a string following [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
   /// Negative durations are prefixed with '-'.
   String toIso() {
-    // Check if any component is negative to determine if entire duration is negative
-    final isNegative = years < 0 || months < 0 || weeks < 0 || days < 0 || 
-                       hours < 0 || minutes < 0 || seconds < 0;
-    
     final buffer = StringBuffer();
-    
+
     // Add negative sign if needed
     if (isNegative) {
       buffer.write('-');
     }
-    
+
     buffer.write('P');
 
     // Use absolute values for output since sign is handled at the beginning
@@ -269,6 +301,20 @@ class ISODuration {
   }
 
   /// convert [ISODuration] to [Duration]
+  ///
+  /// Note: Years and months are ignored as they cannot be accurately
+  /// converted to a fixed duration without a specific date context.
+  ///
+  /// Example:
+  /// ```dart
+  /// final isoDuration = ISODuration(days: 3, hours: 4, minutes: 30);
+  /// final duration = isoDuration.toDuration();
+  /// // Duration(days: 3, hours: 4, minutes: 30)
+  ///
+  /// final withWeeks = ISODuration(weeks: 2, days: 1);
+  /// final duration2 = withWeeks.toDuration();
+  /// // Duration(days: 15)  // 2 weeks + 1 day = 15 days
+  /// ```
   Duration toDuration() {
     return Duration(
       days: days + (weeks * 7),
@@ -279,6 +325,17 @@ class ISODuration {
   }
 
   /// copy with new values
+  ///
+  /// Example:
+  /// ```dart
+  /// final original = ISODuration(years: 1, months: 2, days: 3);
+  ///
+  /// final modified = original.copyWith(years: 2, days: 5);
+  /// // ISODuration(years: 2, months: 2, days: 5)
+  ///
+  /// final onlyMonths = original.copyWith(years: 0, days: 0);
+  /// // ISODuration(years: 0, months: 2, days: 0)
+  /// ```
   ISODuration copyWith({
     int? years,
     int? months,

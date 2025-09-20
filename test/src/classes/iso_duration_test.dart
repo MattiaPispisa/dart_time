@@ -515,8 +515,10 @@ void main() {
         expect(isoString, equals('P0D'));
       });
 
-      test('should handle mixed positive and negative components correctly', () {
-        // According to ISO 8601, if any component is negative, the entire duration is negative
+      test('should handle mixed positive and negative components correctly',
+          () {
+        // According to ISO 8601, if any component is negative,
+        // the entire duration is negative
         final duration = ISODuration(years: 1, months: -2, days: 3);
         final isoString = duration.toIso();
 

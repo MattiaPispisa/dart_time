@@ -7,6 +7,14 @@ class ClockTime {
   /// Creates a new [ClockTime] instance.
   ///
   /// If the time is invalid, an [ArgumentError] is thrown.
+  ///
+  /// Example:
+  /// ```dart
+  /// final time1 = ClockTime(14, minute: 30);         // 14:30:00
+  /// final time2 = ClockTime(9, minute: 15, second: 30); // 09:15:30
+  /// final precise = ClockTime(12, minute: 0, second: 0,
+  ///                          millisecond: 500);      // 12:00:00.500
+  /// ```
   factory ClockTime(
     int hour, {
     int? minute,
@@ -147,6 +155,15 @@ class ClockTime {
   final int microsecond;
 
   /// copy with new values
+  ///
+  /// Example:
+  /// ```dart
+  /// final original = ClockTime(14, minute: 30, second: 45);
+  /// final modified = original.copyWith(hour: 15, minute: 35);
+  /// // ClockTime(15, minute: 35, second: 45)
+  ///
+  /// final sameTime = original.copyWith();  // No changes
+  /// ```
   ClockTime copyWith({
     int? hour,
     int? minute,
@@ -307,6 +324,12 @@ class ClockTime {
   ClockTime addMinutes(int minutes) => add(Duration(minutes: minutes));
 
   /// Add seconds to this time, wrapping around 24 hours if necessary
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(10, minute: 30, second: 30).addSeconds(45);  // 10:31:15
+  /// ClockTime(23, minute: 59, second: 30).addSeconds(45);  // 00:00:15 (next day)
+  /// ```
   ClockTime addSeconds(int seconds) => add(Duration(seconds: seconds));
 
   /// Format as 12-hour time with AM/PM
@@ -346,21 +369,63 @@ class ClockTime {
   }
 
   /// Check if this is morning time (06:00-11:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(8).isMorning;   // true
+  /// ClockTime(14).isMorning;  // false
+  /// ClockTime(5).isMorning;   // false (night)
+  /// ```
   bool get isMorning => hour >= 6 && hour < 12;
 
   /// Check if this is afternoon time (12:00-17:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(14).isAfternoon;  // true
+  /// ClockTime(10).isAfternoon;  // false
+  /// ClockTime(19).isAfternoon;  // false (evening)
+  /// ```
   bool get isAfternoon => hour >= 12 && hour < 18;
 
   /// Check if this is evening time (18:00-21:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(19).isEvening;  // true
+  /// ClockTime(14).isEvening;  // false
+  /// ClockTime(23).isEvening;  // false (night)
+  /// ```
   bool get isEvening => hour >= 18 && hour < 22;
 
   /// Check if this is night time (22:00-05:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(23).isNight;  // true
+  /// ClockTime(2).isNight;   // true
+  /// ClockTime(14).isNight;  // false
+  /// ```
   bool get isNight => hour >= 22 || hour < 6;
 
   /// Check if this is AM (00:00-11:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(9).isAM;   // true
+  /// ClockTime(14).isAM;  // false
+  /// ClockTime(0).isAM;   // true (midnight)
+  /// ```
   bool get isAM => hour < 12;
 
   /// Check if this is PM (12:00-23:59)
+  ///
+  /// Example:
+  /// ```dart
+  /// ClockTime(14).isPM;  // true
+  /// ClockTime(9).isPM;   // false
+  /// ClockTime(12).isPM;  // true (noon)
+  /// ```
   bool get isPM => hour >= 12;
 
   /// Get the time period as a string
