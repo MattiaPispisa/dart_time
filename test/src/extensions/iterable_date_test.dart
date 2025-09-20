@@ -166,5 +166,93 @@ void main() {
         expect(futureYearDates.min(), equals(expectedMin));
       });
     });
+
+    group('spanInDays', () {
+      test('should calculate span correctly', () {
+        final dates = [date1, date2, date3]; // 2023-01-15 to 2023-12-20
+        final span = dates.spanInDays;
+
+        expect(span, equals(339)); // Days between Jan 15 and Dec 20
+      });
+
+      test('should throw StateError for empty iterable', () {
+        final emptyDates = <DateTime>[];
+        expect(() => emptyDates.spanInDays, throwsA(isA<StateError>()));
+      });
+
+      test('should return 0 for single date', () {
+        final dates = [date1];
+        expect(dates.spanInDays, equals(0));
+      });
+    });
+
+    group('closestTo', () {
+      test('should find closest date', () {
+        final dates = [date1, date2, date3]; // Jan 15, Jun 10, Dec 20
+        final target = DateTime(2023, 6, 15); // Close to Jun 10
+
+        expect(dates.closestTo(target), equals(date2));
+      });
+
+      test('should throw StateError for empty iterable', () {
+        final emptyDates = <DateTime>[];
+        final target = DateTime(2023, 6, 15);
+
+        expect(() => emptyDates.closestTo(target), throwsA(isA<StateError>()));
+      });
+
+      test('should handle exact match', () {
+        final dates = [date1, date2, date3];
+
+        expect(dates.closestTo(date2), equals(date2));
+      });
+    });
+
+    group('weekday filtering', () {
+      late List<DateTime> weekDates;
+
+      setUp(() {
+        // June 12-18, 2023: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+        weekDates = [
+          DateTime(2023, 6, 12), // Monday
+          DateTime(2023, 6, 13), // Tuesday
+          DateTime(2023, 6, 14), // Wednesday
+          DateTime(2023, 6, 15), // Thursday
+          DateTime(2023, 6, 16), // Friday
+          DateTime(2023, 6, 17), // Saturday
+          DateTime(2023, 6, 18), // Sunday
+        ];
+      });
+
+      test('weekdaysOnly should filter correctly', () {
+        final weekdays = weekDates.weekdaysOnly;
+
+        expect(weekdays.length, equals(5));
+        expect(weekdays.every((date) => date.isWeekday), isTrue);
+      });
+
+      test('weekendsOnly should filter correctly', () {
+        final weekends = weekDates.weekendsOnly;
+
+        expect(weekends.length, equals(2));
+        expect(weekends.every((date) => date.isWeekend), isTrue);
+      });
+    });
+
+    group('sorting', () {
+      test('sortedAscending should sort correctly', () {
+        final unsorted = [date3, date1, date2]; // Dec, Jan, Jun
+        final sorted = unsorted.sortedAscending();
+
+        expect(sorted, equals([date1, date2, date3]));
+      });
+
+      test('sortedDescending should sort correctly', () {
+        final unsorted = [date1, date3, date2]; // Jan, Dec, Jun
+        final sorted = unsorted.sortedDescending();
+
+        expect(sorted, equals([date3, date2, date1]));
+      });
+    });
   });
 }
