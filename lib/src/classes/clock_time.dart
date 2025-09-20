@@ -285,27 +285,14 @@ class ClockTime {
   }
 
   /// Subtract duration from this time, wrapping around 24 hours if necessary
+  /// (Same as [add] with negative duration)
   ///
   /// Example:
   /// ```dart
   /// ClockTime(1, minute: 30).subtract(Duration(hours: 2)); // 23:30:00
   /// ClockTime(10, minute: 15).subtract(Duration(minutes: 30)); // 09:45:00
   /// ```
-  ClockTime subtract(Duration duration) {
-    final totalMicroseconds =
-        toDuration().inMicroseconds - duration.inMicroseconds;
-    final dayMicroseconds = const Duration(days: 1).inMicroseconds;
-    final wrappedMicroseconds = totalMicroseconds % dayMicroseconds;
-
-    final wrappedDuration = Duration(microseconds: wrappedMicroseconds);
-    return ClockTime(
-      wrappedDuration.inHours,
-      minute: wrappedDuration.inMinutes % 60,
-      second: wrappedDuration.inSeconds % 60,
-      millisecond: wrappedDuration.inMilliseconds % 1000,
-      microsecond: wrappedDuration.inMicroseconds % 1000,
-    );
-  }
+  ClockTime subtract(Duration duration) => add(-duration);
 
   /// Add hours to this time, wrapping around 24 hours if necessary
   ///

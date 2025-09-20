@@ -212,6 +212,7 @@ class DartDateRange {
   }
 
   /// get the dates in the range
+  /// ([step] with `Duration(days: 1)`)
   ///
   /// Example:
   /// ```dart
