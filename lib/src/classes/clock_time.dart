@@ -1,5 +1,16 @@
 import 'package:meta/meta.dart';
 
+const _zero = 0;
+const int _hoursInDay = Duration.hoursPerDay;
+const int _noonHour = 24 ~/ 2;
+const _morningHour = 6;
+const _afternoonHour = 18;
+const _eveningHour = 22;
+const int _minutesInHour = Duration.minutesPerHour;
+const int _secondsInMinute = Duration.secondsPerMinute;
+const int _millisecondsInSecond = Duration.millisecondsPerSecond;
+const int _microsecondsInMillisecond = Duration.microsecondsPerMillisecond;
+
 /// [ClockTime] represents the time of day
 /// from 00:00:00.000000 to 23:59:59.999999.
 @immutable
@@ -22,36 +33,36 @@ class ClockTime {
     int? millisecond,
     int? microsecond,
   }) {
-    minute ??= 0;
-    second ??= 0;
-    millisecond ??= 0;
-    microsecond ??= 0;
+    minute ??= _zero;
+    second ??= _zero;
+    millisecond ??= _zero;
+    microsecond ??= _zero;
 
-    if (hour < 0 || hour > 23) {
+    if (hour < _zero || hour > _hoursInDay - 1) {
       throw ArgumentError.value(hour, 'hour', 'Hour must be between 0 and 23');
     }
-    if (minute < 0 || minute > 59) {
+    if (minute < _zero || minute > _minutesInHour - 1) {
       throw ArgumentError.value(
         minute,
         'minute',
         'Minute must be between 0 and 59',
       );
     }
-    if (second < 0 || second > 59) {
+    if (second < _zero || second > _secondsInMinute - 1) {
       throw ArgumentError.value(
         second,
         'second',
         'Second must be between 0 and 59',
       );
     }
-    if (millisecond < 0 || millisecond > 999) {
+    if (millisecond < _zero || millisecond > _millisecondsInSecond - 1) {
       throw ArgumentError.value(
         millisecond,
         'millisecond',
         'Millisecond must be between 0 and 999',
       );
     }
-    if (microsecond < 0 || microsecond > 999) {
+    if (microsecond < _zero || microsecond > _microsecondsInMillisecond - 1) {
       throw ArgumentError.value(
         microsecond,
         'microsecond',
@@ -128,10 +139,10 @@ class ClockTime {
   }
 
   /// Create ClockTime for midnight (00:00:00.000000)
-  factory ClockTime.midnight() => ClockTime(0);
+  factory ClockTime.midnight() => ClockTime(_zero);
 
   /// Create ClockTime for noon (12:00:00.000000)
-  factory ClockTime.noon() => ClockTime(12);
+  factory ClockTime.noon() => ClockTime(_noonHour);
 
   const ClockTime._(
     this.hour, {
@@ -195,21 +206,21 @@ class ClockTime {
   bool isAtSameTimeAs(ClockTime other) {
     final duration = toDuration();
     final otherDuration = other.toDuration();
-    return duration.compareTo(otherDuration) == 0;
+    return duration.compareTo(otherDuration) == _zero;
   }
 
   /// check if `this` is after [other] clock time
   bool isAfter(ClockTime other) {
     final duration = toDuration();
     final otherDuration = other.toDuration();
-    return duration.compareTo(otherDuration) > 0;
+    return duration.compareTo(otherDuration) > _zero;
   }
 
   /// check if `this` is before [other] clock time
   bool isBefore(ClockTime other) {
     final duration = toDuration();
     final otherDuration = other.toDuration();
-    return duration.compareTo(otherDuration) < 0;
+    return duration.compareTo(otherDuration) < _zero;
   }
 
   /// check if `this` is the same or after [other] clock time
@@ -277,10 +288,10 @@ class ClockTime {
     final wrappedDuration = Duration(microseconds: wrappedMicroseconds);
     return ClockTime(
       wrappedDuration.inHours,
-      minute: wrappedDuration.inMinutes % 60,
-      second: wrappedDuration.inSeconds % 60,
-      millisecond: wrappedDuration.inMilliseconds % 1000,
-      microsecond: wrappedDuration.inMicroseconds % 1000,
+      minute: wrappedDuration.inMinutes % _minutesInHour,
+      second: wrappedDuration.inSeconds % _secondsInMinute,
+      millisecond: wrappedDuration.inMilliseconds % _millisecondsInSecond,
+      microsecond: wrappedDuration.inMicroseconds % _microsecondsInMillisecond,
     );
   }
 
@@ -330,8 +341,10 @@ class ClockTime {
   /// ClockTime(23, minute: 45).format12Hour; // "11:45 PM"
   /// ```
   String get format12Hour {
-    final period = hour < 12 ? 'AM' : 'PM';
-    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+    final period = hour < _noonHour ? 'AM' : 'PM';
+    final displayHour = hour == _zero
+        ? _noonHour
+        : (hour > _noonHour ? hour - _noonHour : hour);
     return '$displayHour:${minute.toString().padLeft(2, '0')} $period';
   }
 
@@ -365,7 +378,7 @@ class ClockTime {
   /// ClockTime(14).isMorning;  // false
   /// ClockTime(5).isMorning;   // false (night)
   /// ```
-  bool get isMorning => hour >= 6 && hour < 12;
+  bool get isMorning => hour >= _morningHour && hour < _noonHour;
 
   /// Check if this is afternoon time (12:00-17:59)
   ///
@@ -375,7 +388,7 @@ class ClockTime {
   /// ClockTime(10).isAfternoon;  // false
   /// ClockTime(19).isAfternoon;  // false (evening)
   /// ```
-  bool get isAfternoon => hour >= 12 && hour < 18;
+  bool get isAfternoon => hour >= _noonHour && hour < _afternoonHour;
 
   /// Check if this is evening time (18:00-21:59)
   ///
@@ -385,7 +398,7 @@ class ClockTime {
   /// ClockTime(14).isEvening;  // false
   /// ClockTime(23).isEvening;  // false (night)
   /// ```
-  bool get isEvening => hour >= 18 && hour < 22;
+  bool get isEvening => hour >= _afternoonHour && hour < _eveningHour;
 
   /// Check if this is night time (22:00-05:59)
   ///
@@ -395,7 +408,7 @@ class ClockTime {
   /// ClockTime(2).isNight;   // true
   /// ClockTime(14).isNight;  // false
   /// ```
-  bool get isNight => hour >= 22 || hour < 6;
+  bool get isNight => hour >= _eveningHour || hour < _morningHour;
 
   /// Check if this is AM (00:00-11:59)
   ///
@@ -405,7 +418,7 @@ class ClockTime {
   /// ClockTime(14).isAM;  // false
   /// ClockTime(0).isAM;   // true (midnight)
   /// ```
-  bool get isAM => hour < 12;
+  bool get isAM => hour < _noonHour;
 
   /// Check if this is PM (12:00-23:59)
   ///
@@ -415,7 +428,7 @@ class ClockTime {
   /// ClockTime(9).isPM;   // false
   /// ClockTime(12).isPM;  // true (noon)
   /// ```
-  bool get isPM => hour >= 12;
+  bool get isPM => hour >= _noonHour;
 
   /// Get the time period as a string
   ///
@@ -442,7 +455,7 @@ class ClockTime {
   /// ClockTime(1, minute: 30).minutesSinceMidnight; // 90
   /// ClockTime(12).minutesSinceMidnight; // 720
   /// ```
-  int get minutesSinceMidnight => hour * 60 + minute;
+  int get minutesSinceMidnight => hour * _minutesInHour + minute;
 
   /// Get total seconds since midnight
   ///
@@ -450,7 +463,8 @@ class ClockTime {
   /// ```dart
   /// ClockTime(0, minute: 1, second: 30).secondsSinceMidnight; // 90
   /// ```
-  int get secondsSinceMidnight => minutesSinceMidnight * 60 + second;
+  int get secondsSinceMidnight =>
+      minutesSinceMidnight * _secondsInMinute + second;
 
   /// Get minutes until midnight (next day)
   ///
@@ -459,7 +473,8 @@ class ClockTime {
   /// ClockTime(23, minute: 30).minutesUntilMidnight; // 30
   /// ClockTime(0).minutesUntilMidnight; // 1440 (24 hours)
   /// ```
-  int get minutesUntilMidnight => 1440 - minutesSinceMidnight;
+  int get minutesUntilMidnight =>
+      (_hoursInDay * _minutesInHour) - minutesSinceMidnight;
 
   @override
   bool operator ==(Object other) {
@@ -485,10 +500,11 @@ class ClockTime {
 
   @override
   String toString() {
+    final micro = millisecond * _microsecondsInMillisecond + microsecond;
     return '${hour.toString().padRight(2, '0')}'
         ':${minute.toString().padRight(2, '0')}'
         ':${second.toString().padRight(2, '0')}'
-        '.${(millisecond * 1000 + microsecond).toString().padRight(6, '0')}';
+        '.${micro.toString().padRight(6, '0')}';
   }
 }
 
@@ -499,8 +515,8 @@ class ClockTime {
 _DHM _parseHourMinutes(List<String> parts) {
   final minutes = int.parse(parts[1]);
   final p = int.parse(parts[0]);
-  final hours = p % 24;
-  final days = p ~/ 24;
+  final hours = p % _hoursInDay;
+  final days = p ~/ _hoursInDay;
   return _DHM(
     days: days,
     hours: hours,
@@ -526,8 +542,8 @@ _SecMillsMicro _parseSecondsMillisecondsMicroseconds(List<String> parts) {
   }
 
   final p2 = int.parse(p[1].padRight(6, '0'));
-  final microseconds = p2 % 1000;
-  final milliseconds = p2 ~/ 1000;
+  final microseconds = p2 % _microsecondsInMillisecond;
+  final milliseconds = p2 ~/ _millisecondsInSecond;
 
   return _SecMillsMicro(
     seconds: seconds,
@@ -550,9 +566,9 @@ class _DHM {
 
 class _SecMillsMicro {
   _SecMillsMicro({
-    this.seconds = 0,
-    this.milliseconds = 0,
-    this.microseconds = 0,
+    this.seconds = _zero,
+    this.milliseconds = _zero,
+    this.microseconds = _zero,
   });
 
   final int seconds;
