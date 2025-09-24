@@ -31,7 +31,7 @@ extension DurationHelper on Duration {
     final isoDuration = ISODuration.parse(isoString);
 
     return Duration(
-      days: isoDuration.days + (isoDuration.weeks * 7),
+      days: isoDuration.days + (isoDuration.weeks * DateTime.daysPerWeek),
       hours: isoDuration.hours,
       minutes: isoDuration.minutes,
       seconds: isoDuration.seconds,
@@ -49,9 +49,9 @@ extension DurationHelper on Duration {
   ISODuration toIsoDuration() {
     return ISODuration(
       days: inDays,
-      hours: inHours % 24,
-      minutes: inMinutes % 60,
-      seconds: inSeconds % 60,
+      hours: inHours % Duration.hoursPerDay,
+      minutes: inMinutes % Duration.minutesPerHour,
+      seconds: inSeconds % Duration.secondsPerMinute,
     );
   }
 
@@ -126,7 +126,7 @@ extension DurationHelper on Duration {
   /// Duration(hours: 1, minutes: 30).inFractionalHours; // 1.5
   /// Duration(hours: 2, minutes: 15).inFractionalHours; // 2.25
   /// ```
-  double get inFractionalHours => inMinutes / 60.0;
+  double get inFractionalHours => inMinutes / Duration.minutesPerHour;
 
   /// Get fractional minutes (with seconds as decimal)
   ///
@@ -135,7 +135,7 @@ extension DurationHelper on Duration {
   /// Duration(minutes: 1, seconds: 30).inFractionalMinutes; // 1.5
   /// Duration(minutes: 2, seconds: 45).inFractionalMinutes; // 2.75
   /// ```
-  double get inFractionalMinutes => inSeconds / 60.0;
+  double get inFractionalMinutes => inSeconds / Duration.secondsPerMinute;
 
   /// Format duration as HH:MM:SS
   ///
@@ -146,8 +146,8 @@ extension DurationHelper on Duration {
   /// ```
   String get hhmmss {
     final hours = inHours.abs();
-    final minutes = inMinutes.abs() % 60;
-    final seconds = inSeconds.abs() % 60;
+    final minutes = inMinutes.abs() % Duration.minutesPerHour;
+    final seconds = inSeconds.abs() % Duration.secondsPerMinute;
     final sign = isNegative ? '-' : '';
     return '$sign${hours.toString().padLeft(2, '0')}:'
         '${minutes.toString().padLeft(2, '0')}:'
@@ -162,7 +162,7 @@ extension DurationHelper on Duration {
   /// // "01:30:45.123"
   /// ```
   String get hhmmssmmm {
-    final milliseconds = inMilliseconds.abs() % 1000;
+    final milliseconds = inMilliseconds.abs() % Duration.millisecondsPerSecond;
     return '$hhmmss.${milliseconds.toString().padLeft(3, '0')}';
   }
 
@@ -173,7 +173,8 @@ extension DurationHelper on Duration {
   /// Duration(minutes: 2, seconds: 35).roundToMinute(); // 3 minutes
   /// Duration(minutes: 2, seconds: 25).roundToMinute(); // 2 minutes
   /// ```
-  Duration roundToMinute() => Duration(minutes: (inSeconds / 60).round());
+  Duration roundToMinute() =>
+      Duration(minutes: (inSeconds / Duration.secondsPerMinute).round());
 
   /// Round to nearest hour
   ///
@@ -182,7 +183,8 @@ extension DurationHelper on Duration {
   /// Duration(hours: 2, minutes: 35).roundToHour(); // 3 hours
   /// Duration(hours: 2, minutes: 25).roundToHour(); // 2 hours
   /// ```
-  Duration roundToHour() => Duration(hours: (inMinutes / 60).round());
+  Duration roundToHour() =>
+      Duration(hours: (inMinutes / Duration.minutesPerHour).round());
 
   /// Round to nearest day
   ///
@@ -191,7 +193,8 @@ extension DurationHelper on Duration {
   /// Duration(days: 2, hours: 15).roundToDay(); // 3 days
   /// Duration(days: 2, hours: 10).roundToDay(); // 2 days
   /// ```
-  Duration roundToDay() => Duration(days: (inHours / 24).round());
+  Duration roundToDay() =>
+      Duration(days: (inHours / Duration.hoursPerDay).round());
 
   /// Check if this duration is longer than other
   ///

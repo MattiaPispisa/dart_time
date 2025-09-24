@@ -171,13 +171,13 @@ extension DateTimeHelper on DateTime {
 
   /// get the end of the year
   DateTime get endOfYear => copyWith(
-        month: 12,
+        month: DateTime.december,
         day: 31,
-        hour: 23,
-        minute: 59,
-        second: 59,
-        millisecond: 999,
-        microsecond: 999,
+        hour: Duration.hoursPerDay - 1,
+        minute: Duration.minutesPerHour - 1,
+        second: Duration.secondsPerMinute - 1,
+        millisecond: Duration.millisecondsPerSecond - 1,
+        microsecond: Duration.microsecondsPerMillisecond - 1,
       );
 
   /// get the end of the month
@@ -198,48 +198,48 @@ extension DateTimeHelper on DateTime {
   DateTime get endOfMonth {
     // Get the first day of the next month,
     // then subtract 1 day to get the last day of current month
-    final nextMonth = month == 12
+    final nextMonth = month == DateTime.december
         ? DateTimeHelper.named(year: year + 1, month: 1, day: 1)
         : DateTimeHelper.named(year: year, month: month + 1, day: 1);
     final lastDayOfMonth = nextMonth.subtract(const Duration(days: 1));
     return copyWith(
       day: lastDayOfMonth.day,
-      hour: 23,
-      minute: 59,
-      second: 59,
-      millisecond: 999,
-      microsecond: 999,
+      hour: Duration.hoursPerDay - 1,
+      minute: Duration.minutesPerHour - 1,
+      second: Duration.secondsPerMinute - 1,
+      millisecond: Duration.millisecondsPerSecond - 1,
+      microsecond: Duration.microsecondsPerMillisecond - 1,
     );
   }
 
   /// get the end of the day
   DateTime get endOfDay => copyWith(
-        hour: 23,
-        minute: 59,
-        second: 59,
-        millisecond: 999,
-        microsecond: 999,
+        hour: Duration.hoursPerDay - 1,
+        minute: Duration.minutesPerHour - 1,
+        second: Duration.secondsPerMinute - 1,
+        millisecond: Duration.millisecondsPerSecond - 1,
+        microsecond: Duration.microsecondsPerMillisecond - 1,
       );
 
   /// get the end of the hour
   DateTime get endOfHour => copyWith(
-        minute: 59,
-        second: 59,
-        millisecond: 999,
-        microsecond: 999,
+        minute: Duration.minutesPerHour - 1,
+        second: Duration.secondsPerMinute - 1,
+        millisecond: Duration.millisecondsPerSecond - 1,
+        microsecond: Duration.microsecondsPerMillisecond - 1,
       );
 
   /// get the end of the minute
   DateTime get endOfMinute => copyWith(
-        second: 59,
-        millisecond: 999,
-        microsecond: 999,
+        second: Duration.secondsPerMinute - 1,
+        millisecond: Duration.millisecondsPerSecond - 1,
+        microsecond: Duration.microsecondsPerMillisecond - 1,
       );
 
   /// get the end of the second
   DateTime get endOfSecond => copyWith(
-        millisecond: 999,
-        microsecond: 999,
+        millisecond: Duration.millisecondsPerSecond - 1,
+        microsecond: Duration.microsecondsPerMillisecond - 1,
       );
 
   /// get the next day
@@ -357,7 +357,7 @@ extension DateTimeHelper on DateTime {
   /// ```
   int get isoWeekOfYear {
     // ISO 8601 week calculation
-    final jan4 = DateTime(year, 1, 4);
+    final jan4 = DateTime(year, DateTime.january, 4);
     final yearStart = jan4._getWeekStart(DateTime.monday);
     final daysDifference = difference(yearStart).inDays;
     final weekNumber = (daysDifference / 7).floor() + 1;
@@ -366,14 +366,14 @@ extension DateTimeHelper on DateTime {
     if (weekNumber <= 0) {
       // Calculate week number for previous year's last week
       final prevYear = year - 1;
-      final prevJan4 = DateTime(prevYear, 1, 4);
+      final prevJan4 = DateTime(prevYear, DateTime.january, 4);
       final prevYearStart = prevJan4._getWeekStart(DateTime.monday);
-      final dec31PrevYear = DateTime(prevYear, 12, 31);
+      final dec31PrevYear = DateTime(prevYear, DateTime.december, 31);
       return ((dec31PrevYear.difference(prevYearStart).inDays) / 7).floor() + 1;
     }
 
     // If week number is > 52/53, check if it belongs to next year
-    final dec28 = DateTime(year, 12, 28);
+    final dec28 = DateTime(year, DateTime.december, 28);
     final dec28WeekNumber =
         ((dec28.difference(yearStart).inDays) / 7).floor() + 1;
 
@@ -489,8 +489,9 @@ extension DateTimeHelper on DateTime {
   int get daysInMonth {
     // Get the first day of the next month,
     // then subtract to get last day of current month
-    final nextMonth =
-        month == 12 ? DateTime(year + 1) : DateTime(year, month + 1);
+    final nextMonth = month == DateTime.december
+        ? DateTimeHelper.named(year: year + 1)
+        : DateTimeHelper.named(year: year, month: month + 1);
     final lastDayOfMonth = nextMonth.subtract(const Duration(days: 1));
     return lastDayOfMonth.day;
   }

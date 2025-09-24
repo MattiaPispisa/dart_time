@@ -27,11 +27,7 @@ class DartDateRange {
     required DateTime end,
   }) {
     if (start.isAfter(end)) {
-      throw ArgumentError.value(
-        start,
-        'start',
-        'Start date must be before end date',
-      );
+      throw _DartDateRangeError.startAfterEndError(start, end);
     }
 
     return DartDateRange._(start: start, end: end);
@@ -198,11 +194,7 @@ class DartDateRange {
   /// Throws [ArgumentError] if [step] is zero or negative.
   Iterable<DateTime> step(Duration step) {
     if (step.inMicroseconds <= 0) {
-      throw ArgumentError.value(
-        step,
-        'step',
-        'Step duration must be positive',
-      );
+      throw _DartDateRangeError.stepNegativeError(step);
     }
 
     return Iterable.generate(
@@ -227,6 +219,30 @@ class DartDateRange {
   /// print(allDates.length); // 2
   /// ```
   Iterable<DateTime> get dates => step(const Duration(days: 1));
+
+  /// merge the range with [other]
+  ///
+  /// Example:
+  /// ```dart
+  /// final range = DartDateRange(
+  ///   start: DateTime(2023, 6, 1),
+  ///   end: DateTime(2023, 6, 7),
+  /// );
+  ///
+  /// final other = DartDateRange(
+  ///   start: DateTime(2023, 6, 8),
+  ///   end: DateTime(2023, 6, 14),
+  /// );
+  ///
+  /// final merged = range.merge(other);
+  /// // From 2023-06-01 00:00:00.000 to 2023-06-14 23:59:59.999
+  /// ```
+  DartDateRange merge(DartDateRange other) {
+    return DartDateRange(
+      start: start.isBefore(other.start) ? start : other.start,
+      end: end.isAfter(other.end) ? end : other.end,
+    );
+  }
 
   /// check if the range is multiple days
   bool get isMultiDay => !start.isSameDay(end);
@@ -266,4 +282,19 @@ class DartDateRange {
         '--'
         ' end: ${end.toIso8601String()}';
   }
+}
+
+abstract class _DartDateRangeError {
+  static ArgumentError startAfterEndError(DateTime start, DateTime end) =>
+      ArgumentError.value(
+        start,
+        'start',
+        'Start date must be before end date',
+      );
+
+  static ArgumentError stepNegativeError(Duration step) => ArgumentError.value(
+        step,
+        'step',
+        'Step duration must be positive',
+      );
 }

@@ -374,11 +374,7 @@ bool _canISOString(String isoString) {
 
 void _validateIsoString(String isoString) {
   if (!_canISOString(isoString)) {
-    throw ArgumentError.value(
-      isoString,
-      'isoString',
-      'String does not follow correct format',
-    );
+    throw _ISODurationError.invalidIsoStringError(isoString);
   }
 }
 
@@ -391,4 +387,13 @@ int _parseTime(String duration, String timeUnit) {
   }
   final timeString = timeMatch.group(0)!;
   return int.parse(timeString.substring(0, timeString.length - 1));
+}
+
+abstract class _ISODurationError {
+  static ArgumentError invalidIsoStringError(String isoString) =>
+      ArgumentError.value(
+        isoString,
+        'isoString',
+        'String does not follow correct format',
+      );
 }

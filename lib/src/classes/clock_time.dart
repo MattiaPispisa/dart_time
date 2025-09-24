@@ -39,35 +39,19 @@ class ClockTime {
     microsecond ??= _zero;
 
     if (hour < _zero || hour > _hoursInDay - 1) {
-      throw ArgumentError.value(hour, 'hour', 'Hour must be between 0 and 23');
+      throw _ClockTimeError.hourOutOfRangeError(hour);
     }
     if (minute < _zero || minute > _minutesInHour - 1) {
-      throw ArgumentError.value(
-        minute,
-        'minute',
-        'Minute must be between 0 and 59',
-      );
+      throw _ClockTimeError.minuteOutOfRangeError(minute);
     }
     if (second < _zero || second > _secondsInMinute - 1) {
-      throw ArgumentError.value(
-        second,
-        'second',
-        'Second must be between 0 and 59',
-      );
+      throw _ClockTimeError.secondOutOfRangeError(second);
     }
     if (millisecond < _zero || millisecond > _millisecondsInSecond - 1) {
-      throw ArgumentError.value(
-        millisecond,
-        'millisecond',
-        'Millisecond must be between 0 and 999',
-      );
+      throw _ClockTimeError.millisecondOutOfRangeError(millisecond);
     }
     if (microsecond < _zero || microsecond > _microsecondsInMillisecond - 1) {
-      throw ArgumentError.value(
-        microsecond,
-        'microsecond',
-        'Microsecond must be between 0 and 999',
-      );
+      throw _ClockTimeError.microsecondOutOfRangeError(microsecond);
     }
 
     return ClockTime._(
@@ -98,7 +82,7 @@ class ClockTime {
     final parts = time.split(':');
 
     if (parts.length != 2 && parts.length != 3) {
-      throw ArgumentError.value(time, 'time', 'Invalid time format');
+      throw _ClockTimeError.invalidTimeFormatError(time);
     }
 
     final hoursMinutes = _parseHourMinutes(parts);
@@ -574,4 +558,50 @@ class _SecMillsMicro {
   final int seconds;
   final int milliseconds;
   final int microseconds;
+}
+
+abstract class _ClockTimeError {
+  static ArgumentError hourOutOfRangeError(int hour) => ArgumentError.value(
+        hour,
+        'hour',
+        'Hour must be between $_zero'
+            ' and ${_hoursInDay - 1}',
+      );
+
+  static ArgumentError minuteOutOfRangeError(int minute) => ArgumentError.value(
+        minute,
+        'minute',
+        'Minute must be between $_zero'
+            ' and ${_minutesInHour - 1}',
+      );
+
+  static ArgumentError secondOutOfRangeError(int second) => ArgumentError.value(
+        second,
+        'second',
+        'Second must be between $_zero'
+            ' and ${_secondsInMinute - 1}',
+      );
+
+  static ArgumentError millisecondOutOfRangeError(int millisecond) =>
+      ArgumentError.value(
+        millisecond,
+        'millisecond',
+        'Millisecond must be between $_zero'
+            ' and ${_millisecondsInSecond - 1}',
+      );
+
+  static ArgumentError microsecondOutOfRangeError(int microsecond) =>
+      ArgumentError.value(
+        microsecond,
+        'microsecond',
+        'Microsecond must be between $_zero'
+            ' and ${_microsecondsInMillisecond - 1}',
+      );
+
+  static ArgumentError invalidTimeFormatError(String time) =>
+      ArgumentError.value(
+        time,
+        'time',
+        'Invalid time format',
+      );
 }
