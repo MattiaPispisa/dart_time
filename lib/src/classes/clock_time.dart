@@ -1,3 +1,4 @@
+import 'package:dart_time/dart_time.dart';
 import 'package:meta/meta.dart';
 
 const _zero = 0;
@@ -254,6 +255,12 @@ class ClockTime {
       microseconds: microsecond,
       milliseconds: millisecond,
     );
+  }
+
+  /// Apply `this` to [date]
+  /// (same as [DateTimeHelper.copyTime])
+  DateTime inDate(DateTime date) {
+    return date.copyTime(this);
   }
 
   /// Add duration to this time, wrapping around 24 hours if necessary

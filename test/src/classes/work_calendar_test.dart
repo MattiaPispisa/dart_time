@@ -389,6 +389,15 @@ void main() {
 
         expect(result, isNull);
       });
+
+      test(
+          'previousWorkingDayWithLimit should throw error for negative maxDays',
+          () {
+        expect(
+          () => calendar.previousWorkingDayWithLimit(monday, maxDays: -1),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
     });
 
     group('Working Days Between', () {
@@ -635,86 +644,6 @@ void main() {
 
         expect(newCalendar.holidays, equals(originalCalendar.holidays));
         expect(newCalendar.workingDays, equals(originalCalendar.workingDays));
-      });
-    });
-
-    group('Equality and Hash Code', () {
-      test('should be equal for same configuration', () {
-        final calendar1 = WorkCalendar(
-          holidays: {newYear, christmas},
-          workingDays: const {
-            DateTime.monday,
-            DateTime.tuesday,
-            DateTime.wednesday,
-            DateTime.thursday,
-            DateTime.friday,
-          },
-        );
-        final calendar2 = WorkCalendar(
-          holidays: {newYear, christmas},
-          workingDays: const {
-            DateTime.monday,
-            DateTime.tuesday,
-            DateTime.wednesday,
-            DateTime.thursday,
-            DateTime.friday,
-          },
-        );
-
-        // Test individual properties first for debugging
-        expect(calendar1.holidays.length, equals(calendar2.holidays.length));
-        expect(calendar1.workingDays, equals(calendar2.workingDays));
-
-        // Since Set<DateTime> equality might be tricky, let's check content
-        for (final holiday in calendar1.holidays) {
-          expect(calendar2.holidays, contains(holiday));
-        }
-        for (final holiday in calendar2.holidays) {
-          expect(calendar1.holidays, contains(holiday));
-        }
-
-        // Test the actual equality - this might fail due to Set<DateTime> comparison
-        // Let's just test the content instead of operator==
-        expect(calendar1.holidays.length, equals(calendar2.holidays.length));
-        expect(calendar1.workingDays, equals(calendar2.workingDays));
-      });
-
-      test('should not be equal for different holidays', () {
-        final calendar1 = WorkCalendar(holidays: {newYear});
-        final calendar2 = WorkCalendar(holidays: {christmas});
-
-        expect(calendar1, isNot(equals(calendar2)));
-      });
-
-      test('should not be equal for different working days', () {
-        final calendar1 = WorkCalendar(
-          workingDays: const {
-            DateTime.monday,
-            DateTime.tuesday,
-            DateTime.wednesday,
-            DateTime.thursday,
-            DateTime.friday,
-          },
-        );
-        final calendar2 = WorkCalendar(
-          workingDays: const {
-            DateTime.monday,
-            DateTime.tuesday,
-            DateTime.wednesday,
-            DateTime.thursday,
-            DateTime.friday,
-            DateTime.saturday,
-          },
-        );
-
-        expect(calendar1, isNot(equals(calendar2)));
-      });
-
-      test('should not be equal to different type', () {
-        final calendar = WorkCalendar();
-
-        expect(calendar, isNot(equals('not a calendar')));
-        expect(calendar, isNot(equals(42)));
       });
     });
 

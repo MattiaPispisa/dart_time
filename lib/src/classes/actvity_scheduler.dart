@@ -111,10 +111,9 @@ class ActivityScheduler {
           // Move to next time slot
           currentTime = currentTime.add(slotInterval);
         }
-
-        // Move to next day
-        searchDate = searchDate.addDays(1).startOfDay;
       }
+      // Move to next day
+      searchDate = searchDate.addDays(1).startOfDay;
     }
 
     return null; // No slot found within search limit
@@ -224,10 +223,9 @@ class ActivityScheduler {
           // Move to next time slot
           currentTime = currentTime.add(slotInterval);
         }
-
-        // Move to next day
-        searchDate = searchDate.addDays(1);
       }
+      // Move to next day
+      searchDate = searchDate.addDays(1);
     }
 
     return availableSlots;
@@ -241,11 +239,16 @@ class ActivityScheduler {
     List<DartDateRange> sortedBusySlots,
   ) {
     for (final busySlot in sortedBusySlots) {
-      if (busySlot.cross(potentialSlot)) {
-        return true;
-      }
-      if (busySlot.start.isAfter(potentialSlot.end)) {
+      // Since busySlots are sorted by start time, if this busySlot starts
+      // after our potential slot ends, no more conflicts are possible
+      if (busySlot.start.isSameOrAfter(potentialSlot.end)) {
         break;
+      }
+
+      // Check for overlap
+      if (busySlot.end.isAfter(potentialSlot.start) &&
+          potentialSlot.end.isAfter(busySlot.start)) {
+        return true;
       }
     }
     return false;

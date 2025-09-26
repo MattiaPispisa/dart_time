@@ -69,12 +69,6 @@ class ClockTimeRange {
     return startDate <= date && date <= endDate;
   }
 
-  /// Apply `this` to [date]
-  /// (same as [DateTimeHelper.copyTime])
-  DateTime inDate(DateTime date) {
-    return date.copyTime(start);
-  }
-
   @override
   String toString() {
     return 'start: $start --- end: $end';

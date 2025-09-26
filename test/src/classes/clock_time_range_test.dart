@@ -120,7 +120,6 @@ void main() {
         expect(result, contains(endTime.toString()));
       });
     });
-
     group('equality and hashCode', () {
       test('should be equal when start and end match', () {
         final range1 = ClockTimeRange(start: startTime, end: endTime);

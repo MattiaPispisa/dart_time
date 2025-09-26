@@ -169,6 +169,20 @@ void main() {
       });
     });
 
+    group('inDate', () {
+      test('should return date with start time', () {
+        final range = ClockTime(9, minute: 30, second: 45);
+        final date = DateTimeHelper.named(
+          year: 2023,
+          month: 6,
+          day: 15,
+        );
+        final result = range.inDate(date);
+        expect(result.isSameDay(date), isTrue);
+        expect(result, equals(date.copyWith(hour: 9, minute: 30, second: 45)));
+      });
+    });
+
     group('toJson', () {
       test('should convert ClockTime to JSON', () {
         final time = ClockTime(

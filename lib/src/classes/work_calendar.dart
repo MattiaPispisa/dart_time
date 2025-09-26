@@ -433,17 +433,6 @@ class WorkCalendar {
   }
 
   @override
-  bool operator ==(Object other) {
-    if (other is WorkCalendar) {
-      return holidays == other.holidays && workingDays == other.workingDays;
-    }
-    return false;
-  }
-
-  @override
-  int get hashCode => Object.hashAll([holidays, workingDays]);
-
-  @override
   String toString() =>
       'WorkCalendar(holidays: $holidays, workingDays: $workingDays)';
 }

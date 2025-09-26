@@ -172,6 +172,29 @@ void main() {
       });
     });
 
+    group('merge', () {
+      test('should merge ranges', () {
+        final range1 = DartDateRange(
+          start: DateTimeHelper.named(year: 2023, month: 6, day: 1),
+          end: DateTimeHelper.named(year: 2023, month: 6, day: 7),
+        );
+        final range2 = DartDateRange(
+          start: DateTimeHelper.named(year: 2023, month: 5, day: 30),
+          end: DateTimeHelper.named(year: 2023, month: 6, day: 3),
+        );
+        final merged = range1.merge(range2);
+        expect(
+          merged,
+          equals(
+            DartDateRange(
+              start: DateTimeHelper.named(year: 2023, month: 5, day: 30),
+              end: DateTimeHelper.named(year: 2023, month: 6, day: 7),
+            ),
+          ),
+        );
+      });
+    });
+
     group('contains', () {
       test('should contain smaller range within', () {
         final range1 = DartDateRange(
