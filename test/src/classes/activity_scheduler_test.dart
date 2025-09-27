@@ -151,7 +151,7 @@ void main() {
         );
       });
 
-      test('should handle overnight shifts', () {
+      test('should handle overnight shifts - start before midnight', () {
         List<ClockTimeRange> nightShiftFunction(DateTime date) =>
             nightShiftHours;
         final from = monday.copyWith(hour: 23); // Monday 23:00
@@ -166,14 +166,53 @@ void main() {
         );
 
         expect(nextSlot, isNotNull);
-        // Should be within night shift hours
-        expect(
-          nextSlot!.hour,
-          anyOf(
-            greaterThanOrEqualTo(22), // Same day
-            lessThanOrEqualTo(4), // Next day (6:00 - 2 hours)
-          ),
+        // Should start at 23:00 and cross midnight
+        expect(nextSlot!.hour, equals(23));
+        expect(nextSlot.isSameDay(monday), isTrue);
+      });
+
+      test('should handle overnight shifts - cross midnight boundary', () {
+        List<ClockTimeRange> nightShiftFunction(DateTime date) =>
+            nightShiftHours;
+        final from = tuesday.copyWith(hour: 23); // Tuesday 01:00 (early morning)
+        const slotDuration = Duration(hours: 2);
+
+        final nextSlot = ActivityScheduler.findNextSlot(
+          from: from,
+          slotDuration: slotDuration,
+          slotInterval: kDefaultSlotInterval,
+          busySlots: [],
+          workingHours: nightShiftFunction,
         );
+
+        expect(nextSlot, isNotNull);
+        // Should find slot in early morning hours (before 6:00)
+        expect(nextSlot!.hour, 23); // 6:00 - 2 hours
+        expect(nextSlot.isSameDay(tuesday), isTrue);
+      });
+
+      test('should handle overnight shifts - slot spans midnight', () {
+        List<ClockTimeRange> nightShiftFunction(DateTime date) =>
+            nightShiftHours;
+        final from = monday.copyWith(hour: 22, minute: 30); // Monday 22:30
+        const slotDuration = Duration(hours: 3); // Spans midnight
+
+        final nextSlot = ActivityScheduler.findNextSlot(
+          from: from,
+          slotDuration: slotDuration,
+          slotInterval: kDefaultSlotInterval,
+          busySlots: [],
+          workingHours: nightShiftFunction,
+        );
+
+        expect(nextSlot, isNotNull);
+        // Should start before midnight but end after midnight
+        expect(nextSlot!.hour, greaterThanOrEqualTo(22));
+        
+        // Verify the slot actually spans midnight by checking end time
+        final slotEnd = nextSlot.add(slotDuration);
+        expect(slotEnd.day, equals(nextSlot.day + 1));
+        expect(slotEnd.hour, lessThanOrEqualTo(6));
       });
 
       test('should handle split shift schedules', () {
@@ -479,6 +518,34 @@ void main() {
           final timeDiff = availableSlots[i].difference(availableSlots[i - 1]);
           expect(timeDiff, greaterThanOrEqualTo(customInterval));
         }
+      });
+
+      test('should handle overnight shifts in findAvailableSlots', () {
+        List<ClockTimeRange> nightShiftFunction(DateTime date) =>
+            nightShiftHours;
+        final period = DartDateRange(
+          start: monday.copyWith(hour: 22),
+          end: tuesday.copyWith(hour: 7), // Cross midnight
+        );
+        const slotDuration = Duration(hours: 1);
+
+        final availableSlots = ActivityScheduler.findAvailableSlots(
+          period: period,
+          slotDuration: slotDuration,
+          busySlots: [],
+          workingHours: nightShiftFunction,
+        );
+
+        expect(availableSlots, isNotEmpty);
+        
+        // Should have slots both before and after midnight
+        final slotsBeforeMidnight = availableSlots
+            .where((slot) => slot.day == monday.day && slot.hour >= 22);
+        final slotsAfterMidnight = availableSlots
+            .where((slot) => slot.day == tuesday.day && slot.hour < 6);
+        
+        expect(slotsBeforeMidnight, isNotEmpty);
+        expect(slotsAfterMidnight, isNotEmpty);
       });
 
       test('should throw error for negative slot duration', () {
