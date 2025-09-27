@@ -6,7 +6,7 @@
 - Add `median`, `mode`, `averageGap` methods to `Iterable<DateTime>` extension
 - Add `merge` method to `DartDateRange` class
 - Add `inDate` method to `ClockTime` class
-- chore: replace magic number with constants
+- chore: use `DateTime` and `Duration` constants for better readability
 - chore: move errors to separate classes
 
 ## 0.1.0
