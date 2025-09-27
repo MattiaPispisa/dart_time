@@ -9,7 +9,8 @@ const Set<int> _defaultWorkingDays = {
   DateTime.friday,
 };
 
-/// [WorkCalendar] represents a business calendar with working days and holidays.
+/// [WorkCalendar] represents a business calendar
+/// with working days and holidays.
 ///
 /// This class helps determine working days, calculate business day differences,
 /// and navigate between working days while respecting holidays and weekends.
@@ -188,7 +189,8 @@ class WorkCalendar {
   /// The returned date will be at the start of the working day (midnight).
   ///
   /// **Note:** This method can potentially search indefinitely if there are
-  /// no working days defined. Use [nextWorkingDayWithLimit] for safer operation.
+  /// no working days defined. Use [nextWorkingDayWithLimit]
+  /// for safer operation.
   ///
   /// **Example:**
   /// ```dart
