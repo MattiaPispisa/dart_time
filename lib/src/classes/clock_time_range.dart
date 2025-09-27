@@ -31,6 +31,52 @@ class ClockTimeRange {
   /// the end of the range
   final ClockTime end;
 
+  /// Returns the effective date range for this time range on the given [date].
+  ///
+  /// For time range within the same day returns the same day.
+  /// For overnight shifts (e.g., 22:00-06:00), the end time is moved
+  /// to the next day.
+  ///
+  /// Example:
+  /// ```dart
+  /// final timeRange = ClockTimeRange(
+  ///   start: ClockTime(9),
+  ///   end: ClockTime(17),
+  /// );
+  /// final nightRange = ClockTimeRange(
+  ///   start: ClockTime(22),
+  ///   end: ClockTime(6),
+  /// );
+  ///
+  /// final monday = DateTime(2023, 6, 12);
+  ///
+  /// // Day shift: same day
+  /// final dayRange = timeRange.effectiveRange(monday);
+  /// // Returns: 2023-06-12 09:00 to 2023-06-12 17:00
+  ///
+  /// // Night shift: crosses midnight
+  /// final nightRange = nightRange.effectiveRange(monday);
+  /// // Returns: 2023-06-12 22:00 to 2023-06-13 06:00
+  /// ```
+  DartDateRange effectiveRange(DateTime date) {
+    final startDateTime = date.copyTime(start);
+    final endDateTime = date.copyTime(end);
+
+    if (end.isBefore(start)) {
+      // Overnight shift: end time is next day
+      return DartDateRange(
+        start: startDateTime,
+        end: endDateTime.addDays(1),
+      );
+    } else {
+      // Regular shift: same day
+      return DartDateRange(
+        start: startDateTime,
+        end: endDateTime,
+      );
+    }
+  }
+
   /// check if [date] is within the range
   ///
   /// Example:

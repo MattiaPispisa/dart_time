@@ -199,6 +199,47 @@ void main() {
   print('');
 
   // ═══════════════════════════════════════════════════════════════
+  // 📅 Work Calendar - Working days and holidays
+  // ═══════════════════════════════════════════════════════════════
+  print('🌍 Work Calendar:');
+  final calendar = WorkCalendar(
+    workingDays: const {
+      DateTime.monday,
+      DateTime.tuesday,
+      DateTime.wednesday,
+      DateTime.thursday,
+      DateTime.friday,
+    },
+    holidays: {
+      DateTime(2023, 6, 15),
+    },
+  );
+  print('  Is working day? ${calendar.isWorkingDay(DateTime(2023, 6, 15))}');
+  print('  Is holiday? ${calendar.isHoliday(DateTime(2023, 6, 15))}');
+
+  // ═══════════════════════════════════════════════════════════════
+  // 📅 Activity Scheduler - Find available time slots
+  // ═══════════════════════════════════════════════════════════════
+  print('🌍 Activity Scheduler:');
+  final availableSlots = ActivityScheduler.findAvailableSlots(
+    period:
+        DartDateRange(start: DateTime(2023, 6, 15), end: DateTime(2023, 6, 19)),
+    slotDuration: const Duration(hours: 1),
+    busySlots: [],
+    maxSlots: 2,
+    workingHours: (date) => [workHours],
+  );
+  print('  Available slots: $availableSlots');
+  final nextSlot = ActivityScheduler.findNextSlot(
+    from: DateTime.now(),
+    slotDuration: const Duration(hours: 1),
+    slotInterval: const Duration(minutes: 15),
+    busySlots: [],
+    workingHours: (date) => [workHours],
+  );
+  print('  Next slot: $nextSlot');
+
+  // ═══════════════════════════════════════════════════════════════
   // 🎯 Time Granularity - Precision control
   // ═══════════════════════════════════════════════════════════════
 

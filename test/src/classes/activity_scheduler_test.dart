@@ -174,7 +174,8 @@ void main() {
       test('should handle overnight shifts - cross midnight boundary', () {
         List<ClockTimeRange> nightShiftFunction(DateTime date) =>
             nightShiftHours;
-        final from = tuesday.copyWith(hour: 23); // Tuesday 01:00 (early morning)
+        final from =
+            tuesday.copyWith(hour: 23); // Tuesday 01:00 (early morning)
         const slotDuration = Duration(hours: 2);
 
         final nextSlot = ActivityScheduler.findNextSlot(
@@ -208,7 +209,7 @@ void main() {
         expect(nextSlot, isNotNull);
         // Should start before midnight but end after midnight
         expect(nextSlot!.hour, greaterThanOrEqualTo(22));
-        
+
         // Verify the slot actually spans midnight by checking end time
         final slotEnd = nextSlot.add(slotDuration);
         expect(slotEnd.day, equals(nextSlot.day + 1));
@@ -537,13 +538,13 @@ void main() {
         );
 
         expect(availableSlots, isNotEmpty);
-        
+
         // Should have slots both before and after midnight
         final slotsBeforeMidnight = availableSlots
             .where((slot) => slot.day == monday.day && slot.hour >= 22);
         final slotsAfterMidnight = availableSlots
             .where((slot) => slot.day == tuesday.day && slot.hour < 6);
-        
+
         expect(slotsBeforeMidnight, isNotEmpty);
         expect(slotsAfterMidnight, isNotEmpty);
       });

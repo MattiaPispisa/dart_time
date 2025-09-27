@@ -27,6 +27,8 @@
       - [`ClockTimeRange` - Time Ranges](#clocktimerange---time-ranges)
       - [`DartDateRange` - Date Ranges](#dartdaterange---date-ranges)
       - [`ISODuration` - ISO 8601 Durations](#isoduration---iso-8601-durations)
+      - [`WorkCalendar` - Work Calendar](#workcalendar---work-calendar)
+      - [`ActivityScheduler` - Activity Scheduler](#activityscheduler---activity-scheduler)
     - [TimeGranularity Enum](#timegranularity-enum)
 
 
@@ -50,6 +52,8 @@ New types for specific time-related operations:
 - **`ClockTimeRange`** - Represents time ranges for schedule management and time-based filtering
 - **`DartDateRange`** - Powerful date range operations with iteration, overlap detection, and boundary calculations
 - **`ISODuration`** - Full ISO 8601 duration support with positive/negative durations and component-based operations
+- **`WorkCalendar`** - Provides utilities for working days and holidays
+- **`ActivityScheduler`** - Provides utilities for finding available time slots for scheduling
 
 ### **Key Features**
 
@@ -127,6 +131,40 @@ void main() {
   // Negative durations supported
   final timeAgo = ISODuration.parse('-P6M');  // 6 months ago
   print(timeAgo.isNegative);                  // true
+
+  // 📅 Work Calendar - Working days and holidays
+  final calendar = WorkCalendar(
+    workingDays: const {
+      DateTime.monday,
+      DateTime.tuesday,
+      DateTime.wednesday,
+      DateTime.thursday,
+      DateTime.friday,
+    },
+    holidays: {
+      DateTime(2023, 6, 15),
+    },
+  );
+  print(calendar.isWorkingDay(DateTime(2023, 6, 15))); // false
+  print(calendar.isHoliday(DateTime(2023, 6, 15))); // true
+
+  // 📅 Activity Scheduler - Find available time slots
+  final availableSlots = ActivityScheduler.findAvailableSlots(
+    period: DartDateRange(start: DateTime(2023, 6, 15), end: DateTime(2023, 6, 19)),
+    slotDuration: Duration(hours: 1),
+    busySlots: [],
+    maxSlots: 2,
+    workingHours: (date) => [workHours],
+  );
+  print(availableSlots); // [2023-06-15 09:00:00.000, 2023-06-15 10:00:00.000]
+  final nextSlot = ActivityScheduler.findNextSlot(
+    from: DateTime.now(),
+    slotDuration: Duration(hours: 1),
+    slotInterval: Duration(minutes: 15),
+    busySlots: [],
+    workingHours: (date) => [workHours],
+  );
+  print(nextSlot); // 2023-06-15 09:00:00.000
 }
 ```
 
@@ -242,6 +280,38 @@ ISODuration.parse("-P6M")            // 6 months ago
 duration.toIso()                     // Convert back to string
 duration.isNegative                  // Check if negative
 ```
+
+#### `WorkCalendar` - Work Calendar
+Provides utilities for working days and holidays
+
+```dart
+final calendar = WorkCalendar();
+print(calendar.isWorkingDay(DateTime(2023, 6, 15)));
+```
+
+#### `ActivityScheduler` - Activity Scheduler
+Provides utilities for finding available time slots for scheduling activities, meetings, or appointments
+
+```dart
+final availableSlots = ActivityScheduler.findAvailableSlots(
+  period: DartDateRange(start: DateTime(2023, 6, 15), end: DateTime(2023, 6, 19)),
+  slotDuration: Duration(hours: 1),
+  busySlots: [],
+  workingHours: (date) => [workHours],
+);
+print(availableSlots);
+final nextSlot = ActivityScheduler.findNextSlot(
+  from: DateTime.now(),
+  slotDuration: Duration(hours: 1),
+  slotInterval: Duration(minutes: 15),
+  busySlots: [],
+  workingHours: (date) => [workHours],
+);
+print(nextSlot);
+```
+
+
+
 
 ### TimeGranularity Enum
 Control precision for comparisons:

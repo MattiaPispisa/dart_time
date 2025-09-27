@@ -25,6 +25,60 @@ void main() {
       });
     });
 
+    group('effectiveRange', () {
+      test('should return same day range for regular working hours', () {
+        final range = ClockTimeRange(
+          start: ClockTime(9),
+          end: ClockTime(17),
+        );
+        final date = DateTime(2023, 6, 15);
+
+        final effectiveRange = range.effectiveRange(date);
+
+        expect(effectiveRange.start, equals(DateTime(2023, 6, 15, 9)));
+        expect(effectiveRange.end, equals(DateTime(2023, 6, 15, 17)));
+      });
+
+      test('should return overnight range for night shifts', () {
+        final range = ClockTimeRange(
+          start: ClockTime(22),
+          end: ClockTime(6),
+        );
+        final date = DateTime(2023, 6, 15);
+
+        final effectiveRange = range.effectiveRange(date);
+
+        expect(effectiveRange.start, equals(DateTime(2023, 6, 15, 22)));
+        expect(effectiveRange.end, equals(DateTime(2023, 6, 16, 6)));
+      });
+
+      test('should handle edge case: midnight start and end', () {
+        final range = ClockTimeRange(
+          start: ClockTime(0),
+          end: ClockTime(23, minute: 59),
+        );
+        final date = DateTime(2023, 6, 15);
+
+        final effectiveRange = range.effectiveRange(date);
+
+        expect(effectiveRange.start, equals(DateTime(2023, 6, 15)));
+        expect(effectiveRange.end, equals(DateTime(2023, 6, 15, 23, 59)));
+      });
+
+      test('should handle equal start and end times', () {
+        final range = ClockTimeRange(
+          start: ClockTime(12),
+          end: ClockTime(12),
+        );
+        final date = DateTime(2023, 6, 15);
+
+        final effectiveRange = range.effectiveRange(date);
+
+        expect(effectiveRange.start, equals(DateTime(2023, 6, 15, 12)));
+        expect(effectiveRange.end, equals(DateTime(2023, 6, 15, 12)));
+      });
+    });
+
     group('includes', () {
       test('should include DateTime within same-day range', () {
         final range = ClockTimeRange(

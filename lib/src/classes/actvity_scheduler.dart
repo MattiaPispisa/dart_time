@@ -43,7 +43,7 @@ class ActivityScheduler {
   ///       end: DateTime(2024, 1, 15, 12),
   ///     ),
   ///   ],
-  ///   workingHours: workingHours,
+  ///   workingHours: (date) => [workingHours],
   /// );
   /// ```
   static DateTime? findNextSlot({
@@ -83,19 +83,16 @@ class ActivityScheduler {
       final dayWorkingHours = workingHours(searchDate);
 
       for (final workingHour in dayWorkingHours) {
-        final dayStart = searchDate.copyTime(workingHour.start);
-        final dayEnd = searchDate.copyTime(workingHour.end);
-
-        // Handle overnight shifts (end time before start time)
-        final effectiveEnd = workingHour.end.isBefore(workingHour.start)
-            ? dayEnd.addDays(1)
-            : dayEnd;
+        final effectiveRange = workingHour.effectiveRange(searchDate);
 
         // Start search from max of current search time or day start
-        var currentTime = searchDate.isBefore(dayStart) ? dayStart : searchDate;
+        var currentTime = searchDate.isBefore(effectiveRange.start)
+            ? effectiveRange.start
+            : searchDate;
 
         // Search within this day's working hours
-        while (currentTime.add(slotDuration).isSameOrBefore(effectiveEnd)) {
+        while (
+            currentTime.add(slotDuration).isSameOrBefore(effectiveRange.end)) {
           final potentialSlot = DartDateRange(
             start: currentTime,
             end: currentTime.add(slotDuration),
@@ -150,7 +147,7 @@ class ActivityScheduler {
   ///   ),
   ///   slotDuration: Duration(hours: 1),
   ///   busySlots: [],
-  ///   workingHours: workingHours,
+  ///   workingHours: (date) => [workingHours],
   ///   maxSlots: 10,
   /// );
   /// ```
@@ -187,23 +184,18 @@ class ActivityScheduler {
 
       final dayWorkingHours = workingHours(searchDate);
       for (final workingHour in dayWorkingHours) {
-        // Get working hours for this day
-        final dayStart = searchDate.copyTime(workingHour.start);
-        final dayEnd = searchDate.copyTime(workingHour.end);
-
-        // Handle overnight shifts
-        final effectiveEnd = workingHour.end.isBefore(workingHour.start)
-            ? dayEnd.addDays(1)
-            : dayEnd;
+        final effectiveRange = workingHour.effectiveRange(searchDate);
 
         // Start search from max of period start or day start
-        var currentTime =
-            period.start.isAfter(dayStart) ? period.start : dayStart;
+        var currentTime = period.start.isAfter(effectiveRange.start)
+            ? period.start
+            : effectiveRange.start;
 
         // Search within this day's working hours
-        while (currentTime.add(slotDuration).isSameOrBefore(effectiveEnd) &&
-            currentTime.isSameOrBefore(period.end) &&
-            (maxSlots == null || availableSlots.length < maxSlots)) {
+        while (
+            currentTime.add(slotDuration).isSameOrBefore(effectiveRange.end) &&
+                currentTime.isSameOrBefore(period.end) &&
+                (maxSlots == null || availableSlots.length < maxSlots)) {
           final potentialSlot = DartDateRange(
             start: currentTime,
             end: currentTime.add(slotDuration),
